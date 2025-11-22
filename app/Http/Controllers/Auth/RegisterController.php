@@ -44,8 +44,20 @@ class RegisterController extends Controller
         ]);
         
 
+        // Generate unique username from email
+        $baseUsername = strtolower(explode('@', $request->email)[0]);
+        $username = $baseUsername;
+        $counter = 1;
+        
+        // Ensure username is unique
+        while (User::where('username', $username)->exists()) {
+            $username = $baseUsername . $counter;
+            $counter++;
+        }
+        
         $user = User::create([
             'name' => $request->name,
+            'username' => $username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'dob' => $request->dob,
@@ -54,6 +66,7 @@ class RegisterController extends Controller
             'post' => $request->post,
             'police_station' => $request->police_station,
             'district' => $request->district,
+            'role' => 'user', // Set default role
         ]);
 
 
