@@ -33,15 +33,20 @@ return new class extends Migration
                     'commentable_type' => 'App\\Models\\Post'
                 ]);
 
-            // 3. Drop the old foreign key and column
+            // 3. Drop the index, foreign key, and column
             Schema::table('comments', function (Blueprint $table) {
-                // Safely drop the foreign key constraint first
-                // Note: The specific name for the foreign key might vary if you are not using Laravel conventions
-                // We'll try the conventional drop for post_id
+                // Drop index first (critical for SQLite)
+                try {
+                    $table->dropIndex('comments_post_id_index');
+                } catch (\Exception $e) {
+                    // Ignore if index doesn't exist
+                }
+                
+                // Safely drop the foreign key constraint
                 try {
                     $table->dropForeign(['post_id']);
                 } catch (\Exception $e) {
-                    // Ignore if foreign key doesn't exist or name is incorrect
+                    // Ignore if foreign key doesn't exist
                 }
                 
                 $table->dropColumn('post_id');
@@ -64,26 +69,33 @@ return new class extends Migration
      */
     public function down(): void
     {
-        // 1. Recreate the old post_id column if it doesn't exist
+        // 1. Drop the polymorphic columns and index
+        Schema::table('comments', function (Blueprint $table) {
+            if (Schema::hasColumn('comments', 'commentable_id')) {
+                $table->dropIndex(['commentable_type', 'commentable_id']);
+                $table->dropColumn(['commentable_id', 'commentable_type']);
+            }
+        });
+
+        // 2. Recreate the old post_id column if it doesn't exist
         if (!Schema::hasColumn('comments', 'post_id')) {
             Schema::table('comments', function (Blueprint $table) {
                 // Re-add as nullable first
                 $table->foreignId('post_id')->nullable()->constrained()->onDelete('cascade');
             });
 
-            // 2. Reverse migrate data: from polymorphic to post_id
+            // Reverse migrate data: from polymorphic to post_id
             DB::table('comments')
-                ->where('commentable_type', 'App\\Models\\Post')
+                ->whereNotNull('commentable_id')
                 ->update([
                     'post_id' => DB::raw('commentable_id')
                 ]);
         }
 
-        // 3. Drop the polymorphic columns and index
+        // 3. Recreate the index
         Schema::table('comments', function (Blueprint $table) {
-            if (Schema::hasColumn('comments', 'commentable_id')) {
-                $table->dropIndex(['commentable_type', 'commentable_id']);
-                $table->dropColumn(['commentable_id', 'commentable_type']);
+            if (Schema::hasColumn('comments', 'post_id')) {
+                $table->index('post_id', 'comments_post_id_index');
             }
         });
 
