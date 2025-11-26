@@ -147,7 +147,6 @@
 </div>
 
 <script>
-// Avatar preview
 document.getElementById('avatar-input').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -163,7 +162,6 @@ document.getElementById('avatar-input').addEventListener('change', (e) => {
     }
 });
 
-// Cover photo preview
 document.getElementById('cover-input').addEventListener('change', (e) => {
     const file = e.target.files[0];
     if (file) {

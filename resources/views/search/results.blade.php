@@ -216,7 +216,6 @@
 
 @push('scripts')
 <script>
-    // Follow/Unfollow functionality
     document.addEventListener('DOMContentLoaded', function() {
         document.querySelectorAll('.follow-btn').forEach(button => {
             button.addEventListener('click', async function() {

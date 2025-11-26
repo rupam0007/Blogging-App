@@ -8,7 +8,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Smart Blog')</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -29,8 +30,8 @@
                         }
                     },
                     fontFamily: {
-                        'sans': ['Inter', 'system-ui', 'sans-serif'],
-                        'display': ['Poppins', 'Inter', 'sans-serif'],
+                        'sans': ['Poppins', 'system-ui', 'sans-serif'],
+                        'display': ['Poppins', 'sans-serif'],
                     }
                 }
             }
@@ -38,8 +39,25 @@
     </script>
     <style>
         body { 
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            font-feature-settings: 'liga';
         }
         .gradient-text {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -135,46 +153,39 @@
             <div class="flex justify-between items-center h-16">
                 <div class="flex items-center space-x-8">
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
-                        <svg class="w-8 h-8 text-purple-600 dark:text-purple-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path d="M2 5a2 2 0 012-2h7a2 2 0 012 2v4a2 2 0 01-2 2H9l-3 3v-3H4a2 2 0 01-2-2V5z"/>
-                            <path d="M15 7v2a4 4 0 01-4 4H9.828l-1.766 1.767c.28.149.599.233.938.233h2l3 3v-3h2a2 2 0 002-2V9a2 2 0 00-2-2h-1z"/>
-                        </svg>
+                        <span class="material-symbols-outlined text-3xl text-purple-600 dark:text-purple-500" style="font-size: 32px;">article</span>
                         <span class="text-xl font-bold font-display gradient-text hidden sm:block">Smart Blog</span>
                     </a>
 
                     <div class="hidden md:flex space-x-6">
+                        @auth
                         <div class="nav-icon-wrapper">
                             <a href="{{ route('dashboard') }}" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition block">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
-                                </svg>
+                                <span class="material-symbols-outlined">home</span>
                             </a>
                             <span class="nav-tooltip">Home Feed </span>
                         </div>
                         <div class="nav-icon-wrapper">
                             <a href="{{ route('stories.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition block">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"/>
-                                </svg>
+                                <span class="material-symbols-outlined">control_point_duplicate</span>
                             </a>
                             <span class="nav-tooltip">Stories </span>
                         </div>
+                        @endauth
                         <div class="nav-icon-wrapper">
                             <a href="{{ route('blogs.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition block">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                </svg>
+                                <span class="material-symbols-outlined">library_books</span>
                             </a>
                             <span class="nav-tooltip">Blog Posts </span>
                         </div>
+                        @auth
                         <div class="nav-icon-wrapper">
                             <a href="{{ route('bookmarks.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition block">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                                </svg>
+                                <span class="material-symbols-outlined">bookmarks</span>
                             </a>
                             <span class="nav-tooltip">Bookmarks </span>
                         </div>
+                        @endauth
                     </div>
                 </div>
 
@@ -182,32 +193,25 @@
                     <!-- Theme Toggle Button -->
                     <button @click="darkMode = !darkMode" class="theme-toggle" title="Toggle Theme">
                         <div class="theme-toggle-circle">
-                            <svg x-show="!darkMode" class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z" clip-rule="evenodd"></path>
-                            </svg>
-                            <svg x-show="darkMode" class="w-4 h-4 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
-                                <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
-                            </svg>
+                            <span x-show="!darkMode" class="material-symbols-outlined text-yellow-500" style="font-size: 16px;">light_mode</span>
+                            <span x-show="darkMode" class="material-symbols-outlined text-purple-600" style="font-size: 16px;">dark_mode</span>
                         </div>
                     </button>
 
                     <div class="nav-icon-wrapper hidden md:block">
                         <a href="{{ route('search') }}" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition block">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                            </svg>
+                            <span class="material-symbols-outlined">search</span>
                         </a>
-                        <span class="nav-tooltip">Search - Find posts & users</span>
+                        <span class="nav-tooltip">Search </span>
                     </div>
 
+                    @auth
                     <div class="relative nav-icon-wrapper" x-data="{ open: false }">
                         <button @click="open = !open" class="relative text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                            </svg>
+                            <span class="material-symbols-outlined">notifications</span>
                             <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="notif-count"></span>
                         </button>
-                        <span class="nav-tooltip">Notifications - Latest updates</span>
+                        <span class="nav-tooltip">Notifications </span>
 
                         <div x-show="open" @click.away="open = false" x-init="$watch('open', value => value && loadNotificationsList())" class="absolute right-0 mt-2 w-96 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700 max-h-96 overflow-y-auto">
                             <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center">
@@ -227,11 +231,9 @@
 
                     <div class="nav-icon-wrapper">
                         <a href="{{ route('posts.create') }}" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition block">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                            </svg>
+                            <span class="material-symbols-outlined">add_circle</span>
                         </a>
-                        <span class="nav-tooltip">Create Post - Share your thoughts</span>
+                        <span class="nav-tooltip">Create Post </span>
                     </div>
 
                     <div class="relative" x-data="{ open: false }">
@@ -248,27 +250,20 @@
                         <div x-show="open" @click.away="open = false" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-xl border border-gray-200 dark:border-gray-700">
                             <a href="{{ route('profile.show', Auth::user()->username ?? Auth::id()) }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-t-lg text-gray-700 dark:text-gray-200">
                                 <span class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">person</span>
                                     <span>Profile</span>
                                 </span>
                             </a>
                             <a href="{{ route('profile.edit') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-200">
                                 <span class="flex items-center space-x-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    </svg>
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">settings</span>
                                     <span>Settings</span>
                                 </span>
                             </a>
                             @if(Auth::user()->isAdmin())
                                 <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-purple-600 dark:text-purple-400">
                                     <span class="flex items-center space-x-2">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
-                                        </svg>
+                                        <span class="material-symbols-outlined" style="font-size: 18px;">admin_panel_settings</span>
                                         <span>Admin Panel</span>
                                     </span>
                                 </a>
@@ -276,14 +271,22 @@
                             <form action="{{ route('logout') }}" method="POST" class="border-t border-gray-200 dark:border-gray-700">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700 text-red-600 dark:text-red-400 rounded-b-lg flex items-center space-x-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
-                                    </svg>
+                                    <span class="material-symbols-outlined" style="font-size: 18px;">logout</span>
                                     <span>Logout</span>
                                 </button>
                             </form>
                         </div>
                     </div>
+                    @else
+                    <div class="flex items-center space-x-3">
+                        <a href="{{ route('login') }}" class="px-4 py-2 text-gray-700 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 font-semibold transition-colors">
+                            Login
+                        </a>
+                        <a href="{{ route('register') }}" class="px-4 py-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-lg font-semibold transition-all shadow-sm hover:shadow-md">
+                            Sign Up
+                        </a>
+                    </div>
+                    @endauth
                 </div>
             </div>
         </div>
@@ -391,11 +394,11 @@
 
         function getNotificationIcon(type) {
             const icons = {
-                'follow': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>',
-                'unfollow': '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7a4 4 0 11-8 0 4 4 0 018 0zM9 14a6 6 0 00-6 6v1h12v-1a6 6 0 00-6-6zM21 12h-6"/></svg>',
-                'reaction': '<svg class="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>',
-                'comment': '<svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>',
-                'mention': '<svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>'
+                'follow': '<span class="material-symbols-outlined text-blue-500" style="font-size: 20px;">person_add</span>',
+                'unfollow': '<span class="material-symbols-outlined text-gray-500" style="font-size: 20px;">person_remove</span>',
+                'reaction': '<span class="material-symbols-outlined text-red-500" style="font-size: 20px;">favorite</span>',
+                'comment': '<span class="material-symbols-outlined text-blue-500" style="font-size: 20px;">comment</span>',
+                'mention': '<span class="material-symbols-outlined text-yellow-500" style="font-size: 20px;">alternate_email</span>'
             };
             return icons[type] || icons['follow'];
         }

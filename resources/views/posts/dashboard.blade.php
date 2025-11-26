@@ -46,15 +46,15 @@
 
                 <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800 space-y-2 text-sm">
                     <a href="{{ route('profile.show', Auth::user()->username ?? Auth::id()) }}" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-white transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                        <span class="material-symbols-outlined text-xl">person</span>
                         <span>My Profile</span>
                     </a>
                     <a href="{{ route('bookmarks.index') }}" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-white transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/></svg>
+                        <span class="material-symbols-outlined text-xl">bookmark</span>
                         <span>Saved Posts</span>
                     </a>
                     <a href="{{ route('notifications.index') }}" class="flex items-center space-x-2 text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-white transition">
-                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                        <span class="material-symbols-outlined text-xl">notifications</span>
                         <span>Notifications</span>
                     </a>
                 </div>
@@ -220,24 +220,18 @@
                             @csrf
                             <input type="hidden" name="type" value="like">
                             <button type="submit" class="flex items-center space-x-1 {{ $post->hasUserReacted(Auth::id()) ? 'text-red-500' : 'text-gray-400' }} hover:text-red-500 transition">
-                                <svg class="w-6 h-6" fill="{{ $post->hasUserReacted(Auth::id()) ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
+                                <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' {{ $post->hasUserReacted(Auth::id()) ? '1' : '0' }};">favorite</span>
                                 <span>{{ $post->reactions()->count() }}</span>
                             </button>
                         </form>
 
                         <a href="{{ route('blogs.show', $post) }}" class="flex items-center space-x-1 text-gray-400 hover:text-blue-500 transition">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-2xl">comment</span>
                             <span>{{ $post->allComments()->count() }}</span>
                         </a>
 
                         <button onclick="toggleBookmark({{ $post->id }}, this)" class="flex items-center space-x-1 {{ Auth::user()->hasBookmarked($post->id) ? 'text-yellow-500' : 'text-gray-400' }} hover:text-yellow-500 transition bookmark-btn ml-auto" data-bookmarked="{{ Auth::user()->hasBookmarked($post->id) ? 'true' : 'false' }}" title="{{ Auth::user()->hasBookmarked($post->id) ? 'Remove from bookmarks' : 'Save to bookmarks' }}">
-                            <svg class="w-6 h-6" fill="{{ Auth::user()->hasBookmarked($post->id) ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                            </svg>
+                            <span class="material-symbols-outlined text-2xl" style="font-variation-settings: 'FILL' {{ Auth::user()->hasBookmarked($post->id) ? '1' : '0' }};">bookmark</span>
                         </button>
                     </div>
 
@@ -326,7 +320,6 @@
         if (e.key === 'Escape') closeImageModal();
     });
 
-    // Handle follow buttons in feed
     document.querySelectorAll('.follow-btn-feed').forEach(button => {
         button.addEventListener('click', async function() {
             const userId = this.getAttribute('data-user-id');
@@ -373,7 +366,6 @@
         });
     });
 
-    // Toggle bookmark
     async function toggleBookmark(postId, button) {
         const isBookmarked = button.dataset.bookmarked === 'true';
         const url = `/bookmarks/posts/${postId}`;
@@ -389,16 +381,16 @@
             });
             
             const data = await response.json();
-            const svg = button.querySelector('svg');
+            const icon = button.querySelector('.material-symbols-outlined');
             
             if (!isBookmarked) {
-                svg.setAttribute('fill', 'currentColor');
+                icon.style.fontVariationSettings = "'FILL' 1";
                 button.classList.remove('text-gray-400');
                 button.classList.add('text-yellow-500');
                 button.dataset.bookmarked = 'true';
                 button.title = 'Remove from bookmarks';
             } else {
-                svg.setAttribute('fill', 'none');
+                icon.style.fontVariationSettings = "'FILL' 0";
                 button.classList.remove('text-yellow-500');
                 button.classList.add('text-gray-400');
                 button.dataset.bookmarked = 'false';

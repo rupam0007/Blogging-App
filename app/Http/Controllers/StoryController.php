@@ -17,12 +17,16 @@ class StoryController extends Controller
         $followingIds = $user->following()->pluck('following_id')->toArray();
         $followingIds[] = $user->id;
         
-        $stories = Story::with('user', 'reactions')
-            ->whereIn('user_id', $followingIds)
-            ->active()
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('user_id');
+        // Cache stories for 30 seconds to prevent excessive queries
+        $cacheKey = 'stories_' . $user->id . '_' . md5(implode(',', $followingIds));
+        $stories = cache()->remember($cacheKey, 30, function () use ($followingIds) {
+            return Story::with('user', 'reactions')
+                ->whereIn('user_id', $followingIds)
+                ->active()
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->groupBy('user_id');
+        });
         
         return view('stories.index', compact('stories'));
     }

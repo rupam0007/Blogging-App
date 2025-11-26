@@ -194,7 +194,6 @@
             }
         }
 
-        // Handle follow buttons in comments
         document.querySelectorAll('.follow-btn-comment').forEach(button => {
             button.addEventListener('click', async function() {
                 const userId = this.getAttribute('data-user-id');

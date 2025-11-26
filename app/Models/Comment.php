@@ -11,38 +11,32 @@ class Comment extends Model
 
     protected $fillable = [
         'user_id',
-        'post_id',
+        'commentable_id',
+        'commentable_type',
         'parent_id',
         'content',
     ];
 
-    /**
-     * User who commented
-     */
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    /**
-     * Post the comment belongs to
-     */
-    public function post()
+    public function commentable()
     {
-        return $this->belongsTo(Post::class);
+        return $this->morphTo();
     }
 
-    /**
-     * Parent comment (for nested replies)
-     */
+    public function post()
+    {
+        return $this->commentable();
+    }
+
     public function parent()
     {
         return $this->belongsTo(Comment::class, 'parent_id');
     }
 
-    /**
-     * Replies to this comment
-     */
     public function replies()
     {
         return $this->hasMany(Comment::class, 'parent_id');

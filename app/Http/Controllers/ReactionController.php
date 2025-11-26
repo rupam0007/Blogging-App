@@ -3,17 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
-use App\Models\Story;
-use App\Models\Reaction;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ReactionController extends Controller
 {
-    /**
-     * Add or update reaction to a post
-     */
     public function reactToPost(Request $request, Post $post)
     {
         $request->validate(['type' => 'required|in:like,love,laugh,angry,sad,wow']);
@@ -30,7 +25,6 @@ class ReactionController extends Controller
             ]);
             $message = 'Reaction added!';
 
-            // Create notification for post owner
             if ($post->user_id !== Auth::id()) {
                 Notification::create([
                     'user_id' => $post->user_id,
@@ -54,12 +48,9 @@ class ReactionController extends Controller
         return back()->with('success', $message);
     }
 
-    /**
-     * Remove reaction from post
-     */
     public function unreactToPost(Post $post)
     {
-        $deleted = $post->reactions()->where('user_id', Auth::id())->delete();
+        $post->reactions()->where('user_id', Auth::id())->delete();
 
         if (request()->ajax()) {
             return response()->json([

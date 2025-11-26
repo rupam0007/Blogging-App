@@ -8,14 +8,10 @@ use App\Models\Post;
 use App\Models\Comment;
 use App\Models\Story;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
 
 class AdminController extends Controller
 {
-    /**
-     * Admin dashboard with analytics
-     */
     public function dashboard()
     {
         $stats = [
@@ -29,27 +25,21 @@ class AdminController extends Controller
             'new_posts_today' => Post::whereDate('created_at', Carbon::today())->count(),
         ];
 
-        // Most liked posts
         $topPosts = Post::withCount('reactions')
             ->orderBy('reactions_count', 'desc')
             ->limit(10)
             ->get();
 
-        // Most active users
         $topUsers = User::withCount('posts')
             ->orderBy('posts_count', 'desc')
             ->limit(10)
             ->get();
 
-        // Recent signups
         $recentUsers = User::latest()->limit(10)->get();
 
         return view('admin.dashboard', compact('stats', 'topPosts', 'topUsers', 'recentUsers'));
     }
 
-    /**
-     * Manage users
-     */
     public function users(Request $request)
     {
         $users = User::withCount('posts', 'followers', 'following')
@@ -68,20 +58,11 @@ class AdminController extends Controller
         return view('admin.users.index', compact('users'));
     }
 
-    /**
-     * Ban/suspend a user
-     */
     public function banUser(User $user)
     {
-        // You can add a 'status' field to users table
-        // $user->update(['status' => 'banned']);
-        
         return back()->with('success', 'User has been banned.');
     }
 
-    /**
-     * Manage posts
-     */
     public function posts(Request $request)
     {
         $posts = Post::with('user')
@@ -99,48 +80,33 @@ class AdminController extends Controller
         return view('admin.posts.index', compact('posts'));
     }
 
-    /**
-     * Delete a post
-     */
     public function deletePost(Post $post)
     {
         $post->delete();
         return back()->with('success', 'Post deleted successfully!');
     }
 
-    /**
-     * Manage comments
-     */
     public function comments(Request $request)
     {
-        $comments = Comment::with('user', 'post')
+        $comments = Comment::with('user', 'commentable')
             ->latest()
             ->paginate(20);
 
         return view('admin.comments.index', compact('comments'));
     }
 
-    /**
-     * Delete a comment
-     */
     public function deleteComment(Comment $comment)
     {
         $comment->delete();
         return back()->with('success', 'Comment deleted successfully!');
     }
 
-    /**
-     * Make user admin
-     */
     public function makeAdmin(User $user)
     {
         $user->update(['role' => 'admin']);
         return back()->with('success', $user->name . ' is now an admin!');
     }
 
-    /**
-     * Remove admin role
-     */
     public function removeAdmin(User $user)
     {
         $user->update(['role' => 'user']);

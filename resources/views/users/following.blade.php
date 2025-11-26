@@ -173,7 +173,6 @@
 @push('scripts')
 <script>
     document.addEventListener('DOMContentLoaded', function() {
-        // Handle unfollow buttons
         document.querySelectorAll('.unfollow-btn').forEach(button => {
             button.addEventListener('click', async function() {
                 const userId = this.getAttribute('data-user-id');
@@ -181,7 +180,6 @@
             });
         });
 
-        // Handle follow buttons (for other users viewing this page)
         document.querySelectorAll('.follow-btn').forEach(button => {
             button.addEventListener('click', async function() {
                 const userId = this.getAttribute('data-user-id');
@@ -190,11 +188,9 @@
         });
     });
 
-    // Toggle Follow/Unfollow
     async function toggleFollow(userId, button) {
         const isFollowing = button.getAttribute('data-following') === 'true';
         
-        // Disable button during request
         button.disabled = true;
         button.style.opacity = '0.6';
         
@@ -215,7 +211,6 @@
             if (response.ok) {
                 const data = await response.json();
                 
-                // If unfollowed, remove the card from the list
                 if (isFollowing && button.classList.contains('unfollow-btn')) {
                     const card = button.closest('.bg-gray-800');
                     card.style.opacity = '0';
@@ -223,21 +218,17 @@
                     setTimeout(() => {
                         card.remove();
                         
-                        // Check if there are any cards left
                         const remainingCards = document.querySelectorAll('.bg-gray-800.border-gray-700');
                         if (remainingCards.length === 0) {
-                            // Reload page to show empty state
                             window.location.reload();
                         }
                     }, 300);
                 } else {
-                    // Toggle state for follow buttons
                     const newFollowing = !isFollowing;
                     button.setAttribute('data-following', newFollowing ? 'true' : 'false');
                     
                     const followText = button.querySelector('.follow-text');
                     
-                    // Update button appearance
                     if (newFollowing) {
                         button.className = 'follow-btn px-6 py-2 rounded-lg font-semibold transition-all duration-300 bg-gray-700 text-gray-300 hover:bg-gray-600';
                         if (followText) followText.textContent = 'Following';
@@ -253,7 +244,6 @@
             console.error('Error:', error);
             alert('An error occurred. Please try again.');
         } finally {
-            // Re-enable button
             button.disabled = false;
             button.style.opacity = '1';
         }

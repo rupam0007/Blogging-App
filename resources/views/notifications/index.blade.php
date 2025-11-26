@@ -97,9 +97,13 @@
                                     @php
                                         $comment = \App\Models\Comment::find($notification->notifiable_id);
                                     @endphp
-                                    @if($comment)
-                                        <a href="{{ route('blogs.show', $comment->post_id) }}#comment-{{ $notification->notifiable_id }}" class="text-purple-400 hover:text-purple-300 text-sm font-medium">
+                                    @if($comment && $comment->commentable_type === 'App\Models\Post')
+                                        <a href="{{ route('blogs.show', $comment->commentable_id) }}#comment-{{ $notification->notifiable_id }}" class="text-purple-400 hover:text-purple-300 text-sm font-medium">
                                             View Comment →
+                                        </a>
+                                    @elseif($comment && $comment->commentable_type === 'App\Models\Story')
+                                        <a href="{{ route('stories.show', $comment->commentable->user_id) }}" class="text-purple-400 hover:text-purple-300 text-sm font-medium">
+                                            View Story →
                                         </a>
                                     @endif
                                 @elseif($notification->notifiable_type === 'App\Models\User')
@@ -141,7 +145,6 @@
 </div>
 
 <script>
-// AJAX for marking as read
 document.querySelectorAll('.mark-as-read').forEach(form => {
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -162,7 +165,6 @@ document.querySelectorAll('.mark-as-read').forEach(form => {
     });
 });
 
-// AJAX for mark all as read
 const markAllForm = document.getElementById('mark-all-read');
 if (markAllForm) {
     markAllForm.addEventListener('submit', async (e) => {

@@ -8,72 +8,42 @@ use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    /**
-     * Display all notifications
-     */
     public function index()
     {
-        $notifications = Auth::user()->notifications()
-            ->with(['fromUser'])
-            ->paginate(20);
+        $notifications = Auth::user()->notifications()->paginate(20);
         return view('notifications.index', compact('notifications'));
     }
 
-    /**
-     * Get unread notifications count
-     */
     public function unreadCount()
     {
-        $count = Auth::user()->notifications()->whereNull('read_at')->count();
-        return response()->json(['count' => $count]);
+        return response()->json([
+            'count' => Auth::user()->unreadNotifications()->count()
+        ]);
     }
 
-    /**
-     * Get recent notifications for dropdown
-     */
-    public function recent()
-    {
-        $notifications = Auth::user()->notifications()
-            ->with(['fromUser'])
-            ->latest()
-            ->limit(10)
-            ->get();
-        
-        return response()->json(['notifications' => $notifications]);
-    }
-
-    /**
-     * Mark notification as read
-     */
     public function markAsRead(Notification $notification)
     {
         if ($notification->user_id !== Auth::id()) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return response()->json(['success' => false], 403);
         }
 
-        $notification->markAsRead();
+        $notification->update(['read_at' => now()]);
         return response()->json(['success' => true]);
     }
 
-    /**
-     * Mark all notifications as read
-     */
     public function markAllAsRead()
     {
-        Auth::user()->notifications()->whereNull('read_at')->update(['read_at' => now()]);
-        return back()->with('success', 'All notifications marked as read!');
+        Auth::user()->unreadNotifications()->update(['read_at' => now()]);
+        return response()->json(['success' => true, 'message' => 'All notifications marked as read']);
     }
 
-    /**
-     * Delete a notification
-     */
     public function destroy(Notification $notification)
     {
         if ($notification->user_id !== Auth::id()) {
-            return back()->with('error', 'Unauthorized.');
+            abort(403);
         }
-
+        
         $notification->delete();
-        return back()->with('success', 'Notification deleted!');
+        return back()->with('success', 'Notification removed');
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Story;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -61,7 +62,7 @@ class PostController extends Controller
             ->latest()
             ->paginate(10);
         
-        $stories = \App\Models\Story::with('user')
+        $stories = Story::with('user')
             ->whereIn('user_id', $followingIds)
             ->active()
             ->orderBy('created_at', 'desc')

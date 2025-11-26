@@ -10,62 +10,48 @@ use Illuminate\Support\Facades\Storage;
 
 class ProfileController extends Controller
 {
-    /**
-     * Show user profile
-     */
     public function show(User $user)
     {
-        $posts = $user->posts()->where('status', 'published')
-            ->with('reactions', 'allComments')
+        $posts = $user->posts()
+            ->with(['reactions', 'allComments'])
+            ->where('status', 'published')
             ->latest()
-            ->paginate(12);
-
-        $followersCount = $user->followers()->count();
-        $followingCount = $user->following()->count();
+            ->get();
+            
         $isFollowing = Auth::check() ? Auth::user()->isFollowing($user->id) : false;
-
-        return view('profile.show', compact('user', 'posts', 'followersCount', 'followingCount', 'isFollowing'));
+        
+        return view('profile.show', compact('user', 'posts', 'isFollowing'));
     }
 
-    /**
-     * Show edit profile form
-     */
     public function edit()
     {
-        $user = Auth::user();
-        return view('profile.edit', compact('user'));
+        return view('profile.edit', ['user' => Auth::user()]);
     }
 
-    /**
-     * Update profile
-     */
     public function update(Request $request)
     {
         $user = Auth::user();
-
+        
         $request->validate([
             'name' => 'required|string|max:255',
-            'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
+            'username' => 'required|string|max:255|unique:users,username,' . $user->id,
+            'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'bio' => 'nullable|string|max:500',
-            'avatar' => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
-            'cover_photo' => 'nullable|image|mimes:jpg,jpeg,png|max:5120',
+            'avatar' => 'nullable|image|max:1024',
+            'cover_photo' => 'nullable|image|max:2048',
         ]);
 
-        $data = $request->only(['name', 'username', 'bio']);
+        $data = $request->only(['name', 'username', 'email', 'bio']);
 
-        // Handle avatar upload
         if ($request->hasFile('avatar')) {
-            // Delete old avatar
-            if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
+            if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
             $data['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
-        // Handle cover photo upload
         if ($request->hasFile('cover_photo')) {
-            // Delete old cover
-            if ($user->cover_photo && Storage::disk('public')->exists($user->cover_photo)) {
+            if ($user->cover_photo) {
                 Storage::disk('public')->delete($user->cover_photo);
             }
             $data['cover_photo'] = $request->file('cover_photo')->store('covers', 'public');
@@ -73,25 +59,22 @@ class ProfileController extends Controller
 
         $user->update($data);
 
-        return redirect()->route('profile.show', $user->username ?? $user->id)->with('success', 'Profile updated successfully!');
+        return back()->with('success', 'Profile updated successfully!');
     }
 
-    /**
-     * Change password
-     */
     public function changePassword(Request $request)
     {
         $request->validate([
             'current_password' => 'required',
-            'new_password' => 'required|min:8|confirmed',
+            'new_password' => 'required|string|min:6|confirmed',
         ]);
 
         if (!Hash::check($request->current_password, Auth::user()->password)) {
-            return back()->with('error', 'Current password is incorrect.');
+            return back()->withErrors(['current_password' => 'Current password does not match.']);
         }
 
         Auth::user()->update([
-            'password' => Hash::make($request->new_password),
+            'password' => Hash::make($request->new_password)
         ]);
 
         return back()->with('success', 'Password changed successfully!');

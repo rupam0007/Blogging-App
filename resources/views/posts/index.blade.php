@@ -1,94 +1,128 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>All Blog Posts</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta name="csrf-token" content="{{ csrf_token() }}">
-</head>
-<body class="bg-gray-900 text-gray-100 p-8">
-    <div class="max-w-6xl mx-auto">
-        <h1 class="text-4xl font-bold mb-10 text-center text-blue-400">Latest Blogs</h1>
-        
-        <div class="flex justify-end mb-6 space-x-4">
+@extends('layouts.app')
+
+@section('title', 'Latest Blogs - Discover Amazing Content')
+
+@section('content')
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 py-12">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Hero Header -->
+        <div class="text-center mb-12">
+            <div class="inline-flex items-center justify-center mb-6">
+                <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-pink-500 rounded-2xl flex items-center justify-center shadow-xl">
+                    <span class="material-symbols-outlined text-white" style="font-size: 36px;">article</span>
+                </div>
+            </div>
+            <h1 class="text-5xl font-extrabold text-gray-900 dark:text-white mb-4 tracking-tight">
+                Latest <span class="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">Blogs</span>
+            </h1>
+            <p class="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+                Discover amazing stories and insights from our community of writers
+            </p>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="flex justify-center mb-12 gap-4">
             @auth
-                <a href="{{ route('dashboard') }}" class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700">
-                    Go to Dashboard
+                <a href="{{ route('dashboard') }}" class="inline-flex items-center space-x-2 px-6 py-3 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-purple-500 dark:hover:border-purple-500 transition-all shadow-sm hover:shadow-md font-semibold">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">dashboard</span>
+                    <span>Dashboard</span>
+                </a>
+                <a href="{{ route('posts.create') }}" class="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl transition-all shadow-md hover:shadow-lg font-semibold">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+                    <span>Create Post</span>
                 </a>
             @else
-                <a href="{{ route('login') }}" class="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700">
-                    Log In to Post
+                <a href="{{ route('login') }}" class="inline-flex items-center space-x-2 px-8 py-3 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white rounded-xl transition-all shadow-md hover:shadow-lg font-semibold">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">login</span>
+                    <span>Log In to Post</span>
                 </a>
             @endauth
         </div>
 
+        <!-- Blog Grid -->
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             @forelse ($posts as $post)
-                <div class="bg-gray-800 rounded-xl shadow-lg overflow-hidden border border-gray-700 flex flex-col">
+                <article class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg hover:shadow-2xl overflow-hidden border border-gray-200 dark:border-gray-800 flex flex-col transition-all duration-300 hover:-translate-y-1 group">
+                    <!-- Media Section -->
                     @if ($post->image_path)
-                        <div class="relative group cursor-pointer" onclick="openImageModal('{{ asset('storage/' . $post->image_path) }}', '{{ $post->title }}')">
-                            <img src="{{ asset('storage/' . $post->image_path) }}" alt="{{ $post->title }}" class="h-48 w-full object-cover">
-                            <div class="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                                <svg class="w-12 h-12 text-white opacity-0 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"/>
-                                </svg>
+                        <div class="relative h-56 overflow-hidden cursor-pointer" onclick="openImageModal('{{ asset('storage/' . $post->image_path) }}', '{{ $post->title }}')">
+                            <img src="{{ asset('storage/' . $post->image_path) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                                <div class="w-16 h-16 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-white" style="font-size: 32px;">zoom_in</span>
+                                </div>
                             </div>
+                        </div>
+                    @elseif ($post->video_path)
+                        <div class="relative h-56">
+                            <video controls class="w-full h-full object-cover">
+                                <source src="{{ asset('storage/' . $post->video_path) }}" type="video/mp4"> 
+                                Your browser does not support the video tag.
+                            </video>
+                        </div>
+                    @else
+                        <div class="h-56 bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-white/30" style="font-size: 80px;">article</span>
                         </div>
                     @endif
                     
-                    @if ($post->video_path)
-            <div class="w-full mb-8">
-                <h3 class="text-xl font-semibold mb-3 text-blue-300">Video Content</h3>
-                <video controls class="w-full rounded-xl shadow-lg border-2 border-gray-700">
-                    <source src="{{ asset('storage/' . $post->video_path) }}" type="video/mp4"> 
-                    Your browser does not support the video tag.
-                </video>
-            </div>
-        @endif
+                    <!-- Content Section -->
                     <div class="p-6 flex flex-col flex-grow">
-                        <h2 class="text-xl font-bold mb-3 text-white">{{ $post->title }}</h2>
+                        <h2 class="text-xl font-bold mb-3 text-gray-900 dark:text-white line-clamp-2 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors">
+                            <a href="{{ route('blogs.show', $post) }}">{{ $post->title }}</a>
+                        </h2>
                         
-                        <p class="text-gray-400 text-sm mb-4 flex-grow">{{ Str::limit($post->description, 100) }}</p>
+                        <p class="text-gray-600 dark:text-gray-400 text-sm mb-4 flex-grow line-clamp-3">{{ Str::limit($post->description, 120) }}</p>
                         
+                        <!-- Stats & Actions -->
                         @auth
-                        <div class="flex items-center space-x-6 mb-4 pb-4 border-b border-gray-700">
-                            <button onclick="toggleReaction({{ $post->id }}, this)" class="flex items-center space-x-1 {{ $post->hasUserReacted(Auth::id()) ? 'text-red-500' : 'text-gray-400' }} hover:text-red-500 transition reaction-btn" data-reacted="{{ $post->hasUserReacted(Auth::id()) ? 'true' : 'false' }}">
-                                <svg class="w-6 h-6" fill="{{ $post->hasUserReacted(Auth::id()) ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                                <span class="reaction-count">{{ $post->reactions()->count() }}</span>
+                        <div class="flex items-center space-x-4 mb-4 pb-4 border-b border-gray-200 dark:border-gray-800">
+                            <button onclick="toggleReaction({{ $post->id }}, this)" class="flex items-center space-x-1.5 {{ $post->hasUserReacted(Auth::id()) ? 'text-red-500' : 'text-gray-500 dark:text-gray-400' }} hover:text-red-500 transition-colors reaction-btn group/heart" data-reacted="{{ $post->hasUserReacted(Auth::id()) ? 'true' : 'false' }}">
+                                <span class="material-symbols-outlined group-hover/heart:scale-110 transition-transform" style="font-size: 20px; font-variation-settings: 'FILL' {{ $post->hasUserReacted(Auth::id()) ? '1' : '0' }};">favorite</span>
+                                <span class="text-sm font-medium reaction-count">{{ $post->reactions()->count() }}</span>
                             </button>
 
-                            <a href="{{ route('blogs.show', $post) }}" class="flex items-center space-x-1 text-gray-400 hover:text-blue-500 transition">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                </svg>
-                                <span>{{ $post->allComments()->count() }}</span>
+                            <a href="{{ route('blogs.show', $post) }}" class="flex items-center space-x-1.5 text-gray-500 dark:text-gray-400 hover:text-blue-500 transition-colors group/comment">
+                                <span class="material-symbols-outlined group-hover/comment:scale-110 transition-transform" style="font-size: 20px;">comment</span>
+                                <span class="text-sm font-medium">{{ $post->allComments()->count() }}</span>
                             </a>
 
-                            <button onclick="toggleBookmark({{ $post->id }}, this)" class="flex items-center space-x-1 {{ Auth::user()->hasBookmarked($post->id) ? 'text-yellow-500' : 'text-gray-400' }} hover:text-yellow-500 transition bookmark-btn ml-auto" data-bookmarked="{{ Auth::user()->hasBookmarked($post->id) ? 'true' : 'false' }}" title="{{ Auth::user()->hasBookmarked($post->id) ? 'Remove from bookmarks' : 'Save to bookmarks' }}">
-                                <svg class="w-6 h-6" fill="{{ Auth::user()->hasBookmarked($post->id) ? 'currentColor' : 'none' }}" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"/>
-                                </svg>
+                            <button onclick="toggleBookmark({{ $post->id }}, this)" class="flex items-center space-x-1.5 {{ Auth::user()->hasBookmarked($post->id) ? 'text-yellow-500' : 'text-gray-500 dark:text-gray-400' }} hover:text-yellow-500 transition-colors bookmark-btn ml-auto group/bookmark" data-bookmarked="{{ Auth::user()->hasBookmarked($post->id) ? 'true' : 'false' }}" title="{{ Auth::user()->hasBookmarked($post->id) ? 'Remove from bookmarks' : 'Save to bookmarks' }}">
+                                <span class="material-symbols-outlined group-hover/bookmark:scale-110 transition-transform" style="font-size: 20px; font-variation-settings: 'FILL' {{ Auth::user()->hasBookmarked($post->id) ? '1' : '0' }};">bookmark</span>
                             </button>
                         </div>
                         @endauth
                         
-                        <a href="{{ route('blogs.show', $post) }}" class="text-blue-500 hover:text-blue-400 font-semibold text-sm mb-4">
-                            Read More &rarr;
+                        <!-- Read More Link -->
+                        <a href="{{ route('blogs.show', $post) }}" class="inline-flex items-center space-x-2 text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold text-sm mb-4 group/link">
+                            <span>Read More</span>
+                            <span class="material-symbols-outlined group-hover/link:translate-x-1 transition-transform" style="font-size: 16px;">arrow_forward</span>
                         </a>
                         
-                        <div class="mt-auto pt-4 border-t border-gray-700">
-                            <div class="flex items-center justify-between">
-                                <div class="text-xs text-gray-500">
-                                    By: <a href="{{ $post->user->username ? route('profile.show', $post->user->username) : '#' }}" class="text-blue-400 hover:text-blue-300">{{ $post->user->name ?? 'Guest' }}</a> on {{ $post->created_at->format('M d, Y') }}
+                        <!-- Author Section -->
+                        <div class="mt-auto pt-4 border-t border-gray-200 dark:border-gray-800">
+                            <div class="flex items-center justify-between gap-3">
+                                <div class="flex items-center space-x-2 min-w-0">
+                                    @if($post->user->avatar)
+                                        <img src="{{ asset('storage/' . $post->user->avatar) }}" alt="{{ $post->user->name }}" class="w-8 h-8 rounded-full ring-2 ring-purple-500/20">
+                                    @else
+                                        <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white text-xs font-bold shadow-sm">
+                                            {{ strtoupper(substr($post->user->name ?? 'G', 0, 1)) }}
+                                        </div>
+                                    @endif
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-xs font-medium text-gray-900 dark:text-white truncate">
+                                            <a href="{{ $post->user->username ? route('profile.show', $post->user->username) : '#' }}" class="hover:text-purple-600 dark:hover:text-purple-400">{{ $post->user->name ?? 'Guest' }}</a>
+                                        </p>
+                                        <p class="text-xs text-gray-500 dark:text-gray-500">{{ $post->created_at->format('M d, Y') }}</p>
+                                    </div>
                                 </div>
                                 @auth
                                     @if($post->user->id !== Auth::id() && $post->user->username)
                                         <button 
                                             data-user-id="{{ $post->user->id }}"
                                             data-following="{{ Auth::user()->isFollowing($post->user->id) ? 'true' : 'false' }}"
-                                            class="follow-btn-blog px-3 py-1 rounded-lg font-semibold text-xs transition-all duration-300 {{ Auth::user()->isFollowing($post->user->id) ? 'bg-gray-700 text-gray-300 hover:bg-gray-600' : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700' }}">
+                                            class="follow-btn-blog px-3 py-1.5 rounded-lg font-semibold text-xs transition-all duration-300 whitespace-nowrap {{ Auth::user()->isFollowing($post->user->id) ? 'bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-700' : 'bg-gradient-to-r from-purple-600 to-pink-600 text-white hover:from-purple-700 hover:to-pink-700 shadow-sm' }}">
                                             <span class="follow-text">{{ Auth::user()->isFollowing($post->user->id) ? 'Following' : 'Follow' }}</span>
                                         </button>
                                     @endif
@@ -96,25 +130,38 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </article>
             @empty
-                <p class="text-center text-gray-500 col-span-full">No blog posts found. Be the first to post!</p>
+                <div class="col-span-full">
+                    <div class="bg-white dark:bg-gray-900 rounded-2xl border border-gray-200 dark:border-gray-800 p-16 text-center">
+                        <div class="w-24 h-24 bg-gradient-to-br from-purple-100 to-pink-100 dark:from-purple-900/20 dark:to-pink-900/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="material-symbols-outlined text-purple-500" style="font-size: 48px;">article</span>
+                        </div>
+                        <h3 class="text-gray-900 dark:text-white text-2xl font-bold mb-3">No Posts Yet</h3>
+                        <p class="text-gray-600 dark:text-gray-400 mb-8 max-w-md mx-auto">Be the first to share your story and inspire the community!</p>
+                        @auth
+                        <a href="{{ route('posts.create') }}" class="inline-flex items-center space-x-2 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-semibold transition-all shadow-md hover:shadow-lg">
+                            <span class="material-symbols-outlined" style="font-size: 20px;">add_circle</span>
+                            <span>Create First Post</span>
+                        </a>
+                        @endauth
+                    </div>
+                </div>
             @endforelse
         </div>
     </div>
+</div>
 
-    <!-- Image Modal -->
-    <div id="imageModal" class="fixed inset-0 bg-black bg-opacity-90 hidden z-50 flex items-center justify-center p-4" onclick="closeImageModal()">
-        <button onclick="closeImageModal()" class="absolute top-4 right-4 text-white hover:text-gray-300 transition">
-            <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-            </svg>
-        </button>
-        <div class="max-w-7xl max-h-full" onclick="event.stopPropagation()">
-            <img id="modalImage" src="" alt="" class="max-w-full max-h-screen object-contain rounded-lg">
-            <p id="modalCaption" class="text-white text-center mt-4 text-lg"></p>
-        </div>
+<!-- Image Modal -->
+<div id="imageModal" class="fixed inset-0 bg-black/95 backdrop-blur-sm hidden z-50 flex items-center justify-center p-4" onclick="closeImageModal()">
+    <button onclick="closeImageModal()" class="absolute top-6 right-6 text-white hover:text-gray-300 transition-all hover:rotate-90 duration-300">
+        <span class="material-symbols-outlined" style="font-size: 40px;">close</span>
+    </button>
+    <div class="max-w-7xl max-h-full" onclick="event.stopPropagation()">
+        <img id="modalImage" src="" alt="" class="max-w-full max-h-[90vh] object-contain rounded-2xl shadow-2xl">
+        <p id="modalCaption" class="text-white text-center mt-6 text-xl font-semibold"></p>
     </div>
+</div>
 
     <script>
         function openImageModal(src, caption) {
@@ -200,17 +247,17 @@
 
                 const data = await response.json();
                 const countSpan = button.querySelector('.reaction-count');
-                const svg = button.querySelector('svg');
+                const icon = button.querySelector('.material-symbols-outlined');
                 
                 if (!isReacted) {
-                    svg.setAttribute('fill', 'currentColor');
-                    button.classList.remove('text-gray-400');
+                    icon.style.fontVariationSettings = "'FILL' 1";
+                    button.classList.remove('text-gray-400', 'dark:text-gray-400');
                     button.classList.add('text-red-500');
                     button.dataset.reacted = 'true';
                 } else {
-                    svg.setAttribute('fill', 'none');
+                    icon.style.fontVariationSettings = "'FILL' 0";
                     button.classList.remove('text-red-500');
-                    button.classList.add('text-gray-400');
+                    button.classList.add('text-gray-400', 'dark:text-gray-400');
                     button.dataset.reacted = 'false';
                 }
                 
@@ -235,18 +282,18 @@
                 });
                 
                 const data = await response.json();
-                const svg = button.querySelector('svg');
+                const icon = button.querySelector('.material-symbols-outlined');
                 
                 if (!isBookmarked) {
-                    svg.setAttribute('fill', 'currentColor');
-                    button.classList.remove('text-gray-400');
+                    icon.style.fontVariationSettings = "'FILL' 1";
+                    button.classList.remove('text-gray-400', 'dark:text-gray-400');
                     button.classList.add('text-yellow-500');
                     button.dataset.bookmarked = 'true';
                     button.title = 'Remove from bookmarks';
                 } else {
-                    svg.setAttribute('fill', 'none');
+                    icon.style.fontVariationSettings = "'FILL' 0";
                     button.classList.remove('text-yellow-500');
-                    button.classList.add('text-gray-400');
+                    button.classList.add('text-gray-400', 'dark:text-gray-400');
                     button.dataset.bookmarked = 'false';
                     button.title = 'Save to bookmarks';
                 }
@@ -256,5 +303,4 @@
         }
         @endauth
     </script>
-</body>
-</html>
+@endsection

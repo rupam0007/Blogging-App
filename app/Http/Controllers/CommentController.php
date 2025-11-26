@@ -48,7 +48,7 @@ class CommentController extends Controller
             }
         }
 
-        $this->processMentions($request->content, $post, $comment);
+        $this->processMentions($request->content, $comment);
 
         if ($request->ajax()) {
             return response()->json([
@@ -97,21 +97,33 @@ class CommentController extends Controller
             return back()->with('error', 'Unauthorized.');
         }
 
-        $postId = $comment->post_id;
+        // Store commentable info before deletion
+        $commentableType = $comment->commentable_type;
+        $commentableId = $comment->commentable_id;
+        
         $comment->delete();
+        
+        // Get updated comment count
+        $count = 0;
+        if ($commentableType && $commentableId) {
+            $commentable = $commentableType::find($commentableId);
+            if ($commentable) {
+                $count = $commentable->allComments()->count();
+            }
+        }
         
         if (request()->ajax()) {
             return response()->json([
                 'success' => true,
                 'message' => 'Comment deleted!',
-                'comments_count' => Post::find($postId)->allComments()->count()
+                'comments_count' => $count
             ]);
         }
         
         return back()->with('success', 'Comment deleted!');
     }
 
-    private function processMentions($content, $post, $comment)
+    private function processMentions($content, $comment)
     {
         preg_match_all('/@(\w+)/', $content, $matches);
         $usernames = $matches[1];

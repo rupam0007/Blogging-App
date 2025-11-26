@@ -39,6 +39,21 @@ class Story extends Model
     }
 
     /**
+     * Polymorphic relationship: Story can have comments
+     */
+    public function comments()
+    {
+        return $this->morphMany(Comment::class, 'commentable')
+                    ->whereNull('parent_id')
+                    ->orderBy('created_at', 'desc');
+    }
+
+    public function allComments()
+    {
+        return $this->morphMany(Comment::class, 'commentable');
+    }
+
+    /**
      * Check if story has expired (24 hours)
      */
     public function isExpired()

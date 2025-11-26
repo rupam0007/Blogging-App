@@ -132,7 +132,6 @@
 </div>
 
 <script>
-// AJAX for follow/unfollow
 document.addEventListener('DOMContentLoaded', function() {
     const followButton = document.getElementById('followButton');
     
@@ -173,7 +172,6 @@ document.addEventListener('DOMContentLoaded', function() {
                         followText.textContent = 'Follow';
                     }
                     
-                    // Update follower count in stats
                     const followerLinks = document.querySelectorAll('a[href*="followers"]');
                     if (followerLinks.length > 0 && data.followers_count !== undefined) {
                         followerLinks.forEach(link => {

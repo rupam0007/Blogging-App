@@ -8,15 +8,11 @@ use Illuminate\Http\Request;
 
 class SearchController extends Controller
 {
-    /**
-     * Search for blogs, users, and tags
-     */
     public function index(Request $request)
     {
         $query = $request->input('q');
-        $type = $request->input('type', 'all'); // all, posts, users
+        $type = $request->input('type', 'all');
 
-        // Get total counts for all types
         $postsCount = 0;
         $usersCount = 0;
 
@@ -34,7 +30,6 @@ class SearchController extends Controller
                 ->count();
         }
 
-        // Get paginated results based on type
         $posts = collect();
         $users = collect();
 
@@ -60,9 +55,6 @@ class SearchController extends Controller
         return view('search.results', compact('query', 'posts', 'users', 'type', 'postsCount', 'usersCount'));
     }
 
-    /**
-     * Autocomplete search suggestions
-     */
     public function autocomplete(Request $request)
     {
         $query = $request->input('q');
@@ -71,7 +63,7 @@ class SearchController extends Controller
             'posts' => Post::where('status', 'published')
                 ->where('title', 'LIKE', "%{$query}%")
                 ->limit(5)
-                ->pluck('title'),
+                ->get(['id', 'title']),
             'users' => User::where('name', 'LIKE', "%{$query}%")
                 ->orWhere('username', 'LIKE', "%{$query}%")
                 ->limit(5)

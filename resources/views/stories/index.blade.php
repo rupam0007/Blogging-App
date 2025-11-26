@@ -10,9 +10,7 @@
                 <p class="text-gray-400">Share moments that disappear in 24 hours</p>
             </div>
             <a href="{{ route('stories.create') }}" class="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium transition-all flex items-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                </svg>
+                <span class="material-symbols-outlined mr-2" style="font-size: 20px;">add_circle</span>
                 Create Story
             </a>
         </div>
@@ -38,9 +36,7 @@
                                         <source src="{{ Storage::url($firstStory->media_path) }}" type="video/mp4">
                                     </video>
                                     <div class="absolute inset-0 flex items-center justify-center">
-                                        <svg class="w-12 h-12 text-white opacity-80" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd"></path>
-                                        </svg>
+                                        <span class="material-symbols-outlined text-white opacity-80" style="font-size: 48px; font-variation-settings: 'FILL' 1;">play_circle</span>
                                     </div>
                                 @endif
 
@@ -76,9 +72,7 @@
         @else
             <!-- Empty State -->
             <div class="bg-gray-800 rounded-xl border border-gray-700 p-12 text-center">
-                <svg class="w-20 h-20 text-gray-600 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
-                </svg>
+                <span class="material-symbols-outlined text-gray-600 mx-auto mb-4" style="font-size: 80px;">video_camera_front</span>
                 <h3 class="text-white text-xl font-semibold mb-2">No active stories</h3>
                 <p class="text-gray-400 mb-6">Be the first to share a story</p>
                 <a href="{{ route('stories.create') }}" class="inline-block bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-6 py-3 rounded-lg font-medium transition-all">

@@ -3,16 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
-use App\Models\Follow;
 use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class FollowController extends Controller
 {
-    /**
-     * Follow a user
-     */
     public function follow(User $user)
     {
         if ($user->id === Auth::id()) {
@@ -22,7 +18,6 @@ class FollowController extends Controller
         if (!Auth::user()->isFollowing($user->id)) {
             Auth::user()->following()->attach($user->id);
 
-            // Create notification
             Notification::create([
                 'user_id' => $user->id,
                 'from_user_id' => Auth::id(),
@@ -46,15 +41,11 @@ class FollowController extends Controller
         return back()->with('info', 'You are already following this user.');
     }
 
-    /**
-     * Unfollow a user
-     */
     public function unfollow(User $user)
     {
         if (Auth::user()->isFollowing($user->id)) {
             Auth::user()->following()->detach($user->id);
             
-            // Create notification for unfollow
             Notification::create([
                 'user_id' => $user->id,
                 'from_user_id' => Auth::id(),
@@ -82,9 +73,6 @@ class FollowController extends Controller
         return back()->with('info', 'You are not following this user.');
     }
 
-    /**
-     * Get user's followers
-     */
     public function followers(Request $request, User $user)
     {
         $search = $request->input('search');
@@ -103,9 +91,6 @@ class FollowController extends Controller
         return view('users.followers', compact('user', 'followers'));
     }
 
-    /**
-     * Get user's following
-     */
     public function following(Request $request, User $user)
     {
         $search = $request->input('search');

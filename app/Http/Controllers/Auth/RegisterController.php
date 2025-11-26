@@ -39,7 +39,7 @@ class RegisterController extends Controller
             'password' => [
                 'required', 
                 'confirmed', 
-                Password::defaults()
+                'min:6'
             ],
         ]);
         
