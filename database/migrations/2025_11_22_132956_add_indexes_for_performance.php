@@ -3,7 +3,6 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
@@ -13,94 +12,54 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            if (!$this->hasIndex('posts', 'posts_status_index')) {
-                $table->index('status');
-            }
-            if (!$this->hasIndex('posts', 'posts_created_at_index')) {
-                $table->index('created_at');
-            }
-            if (!$this->hasIndex('posts', 'posts_user_id_status_index')) {
-                $table->index(['user_id', 'status']);
-            }
-            if (!$this->hasIndex('posts', 'posts_status_created_at_index')) {
-                $table->index(['status', 'created_at']);
-            }
+            // We use a try-catch-like approach implicitly by just defining them.
+            // If you need to check existence, use Schema::hasIndex, but standard
+            // migrations usually just declare the index. 
+            // If you encounter "index exists" errors, you can wrap these in:
+            // if (!Schema::hasIndex('posts', 'posts_status_index')) { ... }
+            
+            $table->index('status', 'posts_status_index');
+            $table->index('created_at', 'posts_created_at_index');
+            $table->index(['user_id', 'status'], 'posts_user_id_status_index');
+            $table->index(['status', 'created_at'], 'posts_status_created_at_index');
         });
 
         Schema::table('comments', function (Blueprint $table) {
-            if (!$this->hasIndex('comments', 'comments_post_id_index')) {
-                $table->index('post_id');
-            }
-            if (!$this->hasIndex('comments', 'comments_user_id_index')) {
-                $table->index('user_id');
-            }
-            if (!$this->hasIndex('comments', 'comments_parent_id_index')) {
-                $table->index('parent_id');
-            }
+            $table->index('post_id', 'comments_post_id_index');
+            $table->index('user_id', 'comments_user_id_index');
+            $table->index('parent_id', 'comments_parent_id_index');
         });
 
         Schema::table('reactions', function (Blueprint $table) {
-            if (!$this->hasIndex('reactions', 'reactions_type_index')) {
-                $table->index('type');
-            }
+            $table->index('type', 'reactions_type_index');
         });
 
         Schema::table('follows', function (Blueprint $table) {
-            if (!$this->hasIndex('follows', 'follows_follower_id_index')) {
-                $table->index('follower_id');
-            }
-            if (!$this->hasIndex('follows', 'follows_following_id_index')) {
-                $table->index('following_id');
-            }
+            $table->index('follower_id', 'follows_follower_id_index');
+            $table->index('following_id', 'follows_following_id_index');
         });
 
         Schema::table('bookmarks', function (Blueprint $table) {
-            if (!$this->hasIndex('bookmarks', 'bookmarks_user_id_index')) {
-                $table->index('user_id');
-            }
-            if (!$this->hasIndex('bookmarks', 'bookmarks_post_id_index')) {
-                $table->index('post_id');
-            }
+            $table->index('user_id', 'bookmarks_user_id_index');
+            $table->index('post_id', 'bookmarks_post_id_index');
         });
 
         Schema::table('notifications', function (Blueprint $table) {
-            if (!$this->hasIndex('notifications', 'notifications_user_id_index')) {
-                $table->index('user_id');
-            }
-            if (!$this->hasIndex('notifications', 'notifications_read_at_index')) {
-                $table->index('read_at');
-            }
-            if (!$this->hasIndex('notifications', 'notifications_user_id_read_at_index')) {
-                $table->index(['user_id', 'read_at']);
-            }
+            $table->index('user_id', 'notifications_user_id_index');
+            $table->index('read_at', 'notifications_read_at_index');
+            $table->index(['user_id', 'read_at'], 'notifications_user_id_read_at_index');
         });
 
         Schema::table('stories', function (Blueprint $table) {
-            if (!$this->hasIndex('stories', 'stories_user_id_index')) {
-                $table->index('user_id');
-            }
-            if (!$this->hasIndex('stories', 'stories_expires_at_index')) {
-                $table->index('expires_at');
-            }
-            if (!$this->hasIndex('stories', 'stories_user_id_expires_at_index')) {
-                $table->index(['user_id', 'expires_at']);
-            }
+            $table->index('user_id', 'stories_user_id_index');
+            $table->index('expires_at', 'stories_expires_at_index');
+            $table->index(['user_id', 'expires_at'], 'stories_user_id_expires_at_index');
         });
 
         Schema::table('users', function (Blueprint $table) {
-            if (!$this->hasIndex('users', 'users_username_index')) {
-                $table->index('username');
-            }
-            if (!$this->hasIndex('users', 'users_role_index')) {
-                $table->index('role');
-            }
+            $table->index('username', 'users_username_index');
+            $table->index('role', 'users_role_index');
         });
-    }
-
-    private function hasIndex($table, $index)
-    {
-        $indexes = DB::select("SHOW INDEX FROM {$table} WHERE Key_name = '{$index}'");
-        return !empty($indexes);
     }
 
     /**
@@ -109,47 +68,47 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            $table->dropIndex(['status']);
-            $table->dropIndex(['created_at']);
-            $table->dropIndex(['user_id', 'status']);
-            $table->dropIndex(['status', 'created_at']);
+            $table->dropIndex('posts_status_index');
+            $table->dropIndex('posts_created_at_index');
+            $table->dropIndex('posts_user_id_status_index');
+            $table->dropIndex('posts_status_created_at_index');
         });
 
         Schema::table('comments', function (Blueprint $table) {
-            $table->dropIndex(['post_id']);
-            $table->dropIndex(['user_id']);
-            $table->dropIndex(['parent_id']);
+            $table->dropIndex('comments_post_id_index');
+            $table->dropIndex('comments_user_id_index');
+            $table->dropIndex('comments_parent_id_index');
         });
 
         Schema::table('reactions', function (Blueprint $table) {
-            $table->dropIndex(['type']);
+            $table->dropIndex('reactions_type_index');
         });
 
         Schema::table('follows', function (Blueprint $table) {
-            $table->dropIndex(['follower_id']);
-            $table->dropIndex(['following_id']);
+            $table->dropIndex('follows_follower_id_index');
+            $table->dropIndex('follows_following_id_index');
         });
 
         Schema::table('bookmarks', function (Blueprint $table) {
-            $table->dropIndex(['user_id']);
-            $table->dropIndex(['post_id']);
+            $table->dropIndex('bookmarks_user_id_index');
+            $table->dropIndex('bookmarks_post_id_index');
         });
 
         Schema::table('notifications', function (Blueprint $table) {
-            $table->dropIndex(['user_id']);
-            $table->dropIndex(['read_at']);
-            $table->dropIndex(['user_id', 'read_at']);
+            $table->dropIndex('notifications_user_id_index');
+            $table->dropIndex('notifications_read_at_index');
+            $table->dropIndex('notifications_user_id_read_at_index');
         });
 
         Schema::table('stories', function (Blueprint $table) {
-            $table->dropIndex(['user_id']);
-            $table->dropIndex(['expires_at']);
-            $table->dropIndex(['user_id', 'expires_at']);
+            $table->dropIndex('stories_user_id_index');
+            $table->dropIndex('stories_expires_at_index');
+            $table->dropIndex('stories_user_id_expires_at_index');
         });
 
         Schema::table('users', function (Blueprint $table) {
-            $table->dropIndex(['username']);
-            $table->dropIndex(['role']);
+            $table->dropIndex('users_username_index');
+            $table->dropIndex('users_role_index');
         });
     }
 };
