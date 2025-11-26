@@ -12,11 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            // We use a try-catch-like approach implicitly by just defining them.
-            // If you need to check existence, use Schema::hasIndex, but standard
-            // migrations usually just declare the index. 
-            // If you encounter "index exists" errors, you can wrap these in:
-            // if (!Schema::hasIndex('posts', 'posts_status_index')) { ... }
+            // Laravel handles index creation automatically.
+            // We removed the 'if (!hasIndex)' checks because they caused the crash.
             
             $table->index('status', 'posts_status_index');
             $table->index('created_at', 'posts_created_at_index');
