@@ -10,6 +10,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: 'class',
@@ -41,6 +43,86 @@
         body { 
             font-family: 'Poppins', sans-serif;
             transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        html.has-scroll-smooth {
+            overflow: hidden;
+        }
+        html.has-scroll-dragging {
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        .has-scroll-smooth body {
+            overflow: hidden;
+        }
+        .has-scroll-smooth [data-scroll-container] {
+            min-height: 100vh;
+        }
+        [data-scroll-container] {
+            min-height: 100vh;
+        }
+        /* Loading Overlay */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .loading-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        .loader {
+            width: 60px;
+            height: 60px;
+            position: relative;
+        }
+        .loader-ring {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 4px solid transparent;
+            border-top-color: #9333ea;
+            border-radius: 50%;
+            animation: spin 1.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) infinite;
+        }
+        .loader-ring:nth-child(2) {
+            border-top-color: #ec4899;
+            animation-delay: -0.4s;
+        }
+        .loader-ring:nth-child(3) {
+            border-top-color: #8b5cf6;
+            animation-delay: -0.8s;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .loader-text {
+            position: absolute;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            white-space: nowrap;
+            animation: pulse 1.5s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 1; }
         }
         .material-symbols-outlined {
             font-family: 'Material Symbols Outlined';
@@ -148,10 +230,29 @@
 </head>
 <body class="bg-white dark:bg-gray-950 text-gray-900 dark:text-gray-100">
     
-    <nav class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 fixed w-full z-50 top-0 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95">
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" id="loadingOverlay">
+        <div>
+            <div class="loader">
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+                <div class="loader-ring"></div>
+            </div>
+            <div class="loader-text">Loading...</div>
+        </div>
+    </div>
+
+    <div data-scroll-container>
+    <nav class="bg-gray-50 dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 fixed w-full z-50 top-0 backdrop-blur-sm bg-opacity-95 dark:bg-opacity-95" x-data="{ mobileMenuOpen: false }" data-scroll data-scroll-sticky data-scroll-target="#main-container">
         <div class="max-w-7xl mx-auto px-4 sm:px-6">
             <div class="flex justify-between items-center h-16">
-                <div class="flex items-center space-x-8">
+                <div class="flex items-center space-x-4">
+                    <!-- Mobile Menu Button -->
+                    <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined" x-show="!mobileMenuOpen">menu</span>
+                        <span class="material-symbols-outlined" x-show="mobileMenuOpen">close</span>
+                    </button>
+
                     <a href="{{ route('dashboard') }}" class="flex items-center space-x-2">
                         <span class="material-symbols-outlined text-3xl text-purple-600 dark:text-purple-500" style="font-size: 32px;">article</span>
                         <span class="text-xl font-bold font-display gradient-text hidden sm:block">Smart Blog</span>
@@ -189,9 +290,9 @@
                     </div>
                 </div>
 
-                <div class="flex items-center space-x-4">
+                <div class="flex items-center space-x-2 sm:space-x-4">
                     <!-- Theme Toggle Button -->
-                    <button @click="darkMode = !darkMode" class="theme-toggle" title="Toggle Theme">
+                    <button @click="darkMode = !darkMode" class="theme-toggle scale-90 sm:scale-100" title="Toggle Theme">
                         <div class="theme-toggle-circle">
                             <span x-show="!darkMode" class="material-symbols-outlined text-yellow-500" style="font-size: 16px;">light_mode</span>
                             <span x-show="darkMode" class="material-symbols-outlined text-purple-600" style="font-size: 16px;">dark_mode</span>
@@ -236,7 +337,7 @@
                         <span class="nav-tooltip">Create Post </span>
                     </div>
 
-                    <div class="relative" x-data="{ open: false }">
+                    <div class="relative hidden sm:block" x-data="{ open: false }">
                         <button @click="open = !open" class="flex items-center space-x-2 hover:opacity-80 transition">
                             @if(Auth::user()->avatar)
                                 <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-8 h-8 rounded-full ring-2 ring-transparent hover:ring-purple-500 transition">
@@ -289,10 +390,92 @@
                     @endauth
                 </div>
             </div>
+
+            <!-- Mobile Menu -->
+            <div x-show="mobileMenuOpen" 
+                 x-transition:enter="transition ease-out duration-200"
+                 x-transition:enter-start="opacity-0 transform -translate-y-2"
+                 x-transition:enter-end="opacity-100 transform translate-y-0"
+                 x-transition:leave="transition ease-in duration-150"
+                 x-transition:leave-start="opacity-100 transform translate-y-0"
+                 x-transition:leave-end="opacity-0 transform -translate-y-2"
+                 class="md:hidden border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-900"
+                 @click.away="mobileMenuOpen = false">
+                <div class="px-2 pt-2 pb-3 space-y-1">
+                    @auth
+                    <a href="{{ route('dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">home</span>
+                        <span>Home Feed</span>
+                    </a>
+                    <a href="{{ route('stories.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">control_point_duplicate</span>
+                        <span>Stories</span>
+                    </a>
+                    @endauth
+                    <a href="{{ route('blogs.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">library_books</span>
+                        <span>Blog Posts</span>
+                    </a>
+                    @auth
+                    <a href="{{ route('bookmarks.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">bookmarks</span>
+                        <span>Bookmarks</span>
+                    </a>
+                    <a href="{{ route('search') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">search</span>
+                        <span>Search</span>
+                    </a>
+                    <a href="{{ route('explore') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">explore</span>
+                        <span>Explore</span>
+                    </a>
+                    <a href="{{ route('notifications.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span>Notifications</span>
+                        <span class="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="mobile-notif-count"></span>
+                    </a>
+                    <a href="{{ route('posts.create') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        <span>Create Post</span>
+                    </a>
+
+                    <!-- Mobile Profile Menu -->
+                    <div class="border-t border-gray-200 dark:border-gray-800 pt-3 mt-2">
+                        <a href="{{ route('profile.show', Auth::user()->username ?? Auth::id()) }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            @if(Auth::user()->avatar)
+                                <img src="{{ asset('storage/' . Auth::user()->avatar) }}" class="w-8 h-8 rounded-full">
+                            @else
+                                <div class="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                                    {{ substr(Auth::user()->name, 0, 1) }}
+                                </div>
+                            @endif
+                            <span>My Profile</span>
+                        </a>
+                        <a href="{{ route('profile.edit') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
+                            <span class="material-symbols-outlined">settings</span>
+                            <span>Settings</span>
+                        </a>
+                        @if(Auth::user()->isAdmin())
+                            <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-purple-600 dark:text-purple-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                                <span class="material-symbols-outlined">admin_panel_settings</span>
+                                <span>Admin Panel</span>
+                            </a>
+                        @endif
+                        <form action="{{ route('logout') }}" method="POST">
+                            @csrf
+                            <button type="submit" class="w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-red-600 dark:text-red-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition">
+                                <span class="material-symbols-outlined">logout</span>
+                                <span>Logout</span>
+                            </button>
+                        </form>
+                    </div>
+                    @endauth
+                </div>
+            </div>
         </div>
     </nav>
 
-    <main class="pt-16 min-h-screen bg-gray-50 dark:bg-gray-950">
+    <main class="pt-16 min-h-screen bg-gray-50 dark:bg-gray-950" id="main-container" data-scroll-section>
         @if(session('success'))
             <div class="max-w-7xl mx-auto px-4 sm:px-6 mt-4">
                 <div class="bg-green-50 dark:bg-green-900/20 border border-green-400 dark:border-green-700 text-green-700 dark:text-green-300 px-4 py-3 rounded-lg">
@@ -311,19 +494,142 @@
 
         @yield('content')
     </main>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/gh/alpinejs/alpine@v2.x.x/dist/alpine.min.js" defer></script>
+    <script>
+        // Initialize Locomotive Scroll
+        let scroll;
+        document.addEventListener('DOMContentLoaded', () => {
+            scroll = new LocomotiveScroll({
+                el: document.querySelector('[data-scroll-container]'),
+                smooth: true,
+                smoothMobile: true,
+                resetNativeScroll: true,
+                smartphone: {
+                    smooth: true
+                },
+                tablet: {
+                    smooth: true
+                }
+            });
+        });
+
+        // Show loader function
+        function showLoader(message = 'Loading...') {
+            const overlay = document.getElementById('loadingOverlay');
+            const text = overlay.querySelector('.loader-text');
+            if (text) text.textContent = message;
+            overlay.classList.add('active');
+        }
+
+        // Hide loader function
+        function hideLoader() {
+            const overlay = document.getElementById('loadingOverlay');
+            overlay.classList.remove('active');
+        }
+
+        // Intercept all form submissions
+        document.addEventListener('submit', function(e) {
+            const form = e.target;
+            
+            // Don't show loader for logout forms
+            if (form.action.includes('logout')) {
+                showLoader('Logging out...');
+                return;
+            }
+
+            // Show appropriate loading messages
+            if (form.action.includes('login')) {
+                e.preventDefault();
+                showLoader('Logging in...');
+                setTimeout(() => form.submit(), 300);
+            } else if (form.action.includes('register')) {
+                e.preventDefault();
+                showLoader('Creating account...');
+                setTimeout(() => form.submit(), 300);
+            } else if (form.action.includes('posts') || form.action.includes('dashboard')) {
+                e.preventDefault();
+                showLoader('Saving post...');
+                setTimeout(() => form.submit(), 300);
+            } else if (form.action.includes('comments')) {
+                e.preventDefault();
+                showLoader('Posting comment...');
+                setTimeout(() => form.submit(), 300);
+            } else if (form.action.includes('stories')) {
+                e.preventDefault();
+                showLoader('Uploading story...');
+                setTimeout(() => form.submit(), 300);
+            } else if (form.action.includes('profile')) {
+                e.preventDefault();
+                showLoader('Updating profile...');
+                setTimeout(() => form.submit(), 300);
+            } else {
+                e.preventDefault();
+                showLoader('Processing...');
+                setTimeout(() => form.submit(), 300);
+            }
+        });
+
+        // Show loader on link clicks that cause navigation
+        document.addEventListener('click', function(e) {
+            const link = e.target.closest('a');
+            if (link && link.href && !link.href.includes('#') && !link.target && 
+                !link.hasAttribute('download') && !link.classList.contains('no-loader')) {
+                // Don't show loader for same page navigation
+                if (link.href !== window.location.href) {
+                    showLoader('Loading page...');
+                }
+            }
+        });
+
+        // Hide loader when page loads
+        window.addEventListener('load', () => {
+            hideLoader();
+        });
+
+        // Hide loader on back/forward navigation
+        window.addEventListener('pageshow', (event) => {
+            if (event.persisted) {
+                hideLoader();
+            }
+        });
+
+        // Prevent form resubmission dialog on mobile
+        if (window.performance && window.performance.navigation.type === window.performance.navigation.TYPE_BACK_FORWARD) {
+            hideLoader();
+        }
+
+        // Prevent "Confirm Form Resubmission" dialog
+        window.addEventListener('beforeunload', function(e) {
+            // Only show loader, don't prevent unload
+            showLoader('Loading...');
+        });
+    </script>
     <script>
         async function loadNotifications() {
             try {
                 const response = await fetch('{{ route("notifications.unread-count") }}');
                 const data = await response.json();
                 const badge = document.getElementById('notif-count');
-                badge.textContent = data.count;
-                if(data.count === 0) {
-                    badge.style.display = 'none';
-                } else {
-                    badge.style.display = 'flex';
+                const mobileBadge = document.getElementById('mobile-notif-count');
+                
+                if (badge) {
+                    badge.textContent = data.count;
+                    if(data.count === 0) {
+                        badge.style.display = 'none';
+                    } else {
+                        badge.style.display = 'flex';
+                    }
+                }
+                
+                if (mobileBadge) {
+                    mobileBadge.textContent = data.count;
+                    if(data.count === 0) {
+                        mobileBadge.style.display = 'none';
+                    } else {
+                        mobileBadge.style.display = 'flex';
+                    }
                 }
             } catch (error) {
                 console.error('Error loading notifications:', error);
