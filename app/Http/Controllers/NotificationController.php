@@ -21,6 +21,33 @@ class NotificationController extends Controller
         ]);
     }
 
+    public function recent()
+    {
+        $notifications = Auth::user()->notifications()
+            ->with('fromUser')
+            ->latest()
+            ->take(10)
+            ->get()
+            ->map(function ($notification) {
+                return [
+                    'id' => $notification->id,
+                    'type' => $notification->type,
+                    'data' => $notification->data,
+                    'read_at' => $notification->read_at,
+                    'created_at' => $notification->created_at->toISOString(),
+                    'from_user' => $notification->fromUser ? [
+                        'id' => $notification->fromUser->id,
+                        'name' => $notification->fromUser->name,
+                        'avatar' => $notification->fromUser->avatar,
+                    ] : null,
+                ];
+            });
+
+        return response()->json([
+            'notifications' => $notifications
+        ]);
+    }
+
     public function markAsRead(Notification $notification)
     {
         if ($notification->user_id !== Auth::id()) {
