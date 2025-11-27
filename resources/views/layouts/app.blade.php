@@ -335,7 +335,7 @@
 
                     <div class="relative nav-icon-wrapper">
                         <a href="{{ route('messages.index') }}" class="text-gray-600 dark:text-gray-300 hover:text-purple-600 dark:hover:text-white transition block relative">
-                            <span class="material-symbols-outlined">mail</span>
+                            <span class="material-symbols-outlined">chat_bubble</span>
                             <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="message-count"></span>
                         </a>
                         <span class="nav-tooltip">Messages </span>
@@ -441,7 +441,7 @@
                         <span>Explore</span>
                     </a>
                     <a href="{{ route('messages.index') }}" class="flex items-center space-x-3 px-3 py-2 rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-purple-600 dark:hover:text-purple-400 transition">
-                        <span class="material-symbols-outlined">mail</span>
+                        <span class="material-symbols-outlined">chat_bubble</span>
                         <span>Messages</span>
                         <span class="ml-auto bg-red-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center" id="mobile-message-count"></span>
                     </a>
