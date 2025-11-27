@@ -91,48 +91,6 @@
       </div>
 
       <div>
-        <h3 class="text-xl font-semibold text-purple-400 mb-4">Address</h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div>
-            <label for="village" class="block text-gray-400 font-medium mb-1">Village</label>
-            <input type="text" id="village" name="village" 
-                   value="{{ old('village') }}"
-                   class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
-            @error('village')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
-            @enderror
-          </div>
-          <div>
-            <label for="post" class="block text-gray-400 font-medium mb-1">Post</label>
-            <input type="text" id="post" name="post" 
-                   value="{{ old('post') }}"
-                   class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
-            @error('post')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
-            @enderror
-          </div>
-          <div>
-            <label for="police_station" class="block text-gray-400 font-medium mb-1">Police Station</label>
-            <input type="text" id="police_station" name="police_station" 
-                   value="{{ old('police_station') }}"
-                   class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
-            @error('police_station')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
-            @enderror
-          </div>
-          <div>
-            <label for="district" class="block text-gray-400 font-medium mb-1">District</label>
-            <input type="text" id="district" name="district" 
-                   value="{{ old('district') }}"
-                   class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-300">
-            @error('district')
-                <p class="text-sm text-red-400 mt-1">{{ $message }}</p>
-            @enderror
-          </div>
-        </div>
-      </div>
-
-      <div>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <label for="password" class="block text-gray-400 font-medium mb-1">Password</label>
