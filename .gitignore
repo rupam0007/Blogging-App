@@ -22,3 +22,9 @@
 Homestead.json
 Homestead.yaml
 Thumbs.db
+notes.txt
+progress.txt
+*.swp
+*.swo
+*~
+.php_cs.cache
