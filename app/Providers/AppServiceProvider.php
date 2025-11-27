@@ -24,5 +24,10 @@ class AppServiceProvider extends ServiceProvider
         Password::defaults(function () {
             return Password::min(6);
         });
+
+        // Force HTTPS in production (Railway)
+        if (app()->environment('production')) {
+            \Illuminate\Support\Facades\URL::forceScheme('https');
+        }
     }
 }
