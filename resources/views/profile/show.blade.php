@@ -60,13 +60,19 @@
                                 Edit Profile
                             </a>
                         @else
-                            <button 
-                                id="followButton"
-                                data-user-id="{{ $user->id }}"
-                                data-following="{{ $isFollowing ? 'true' : 'false' }}"
-                                class="px-6 py-2 rounded-lg font-medium transition-all {{ $isFollowing ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white' }}">
-                                <span class="follow-text">{{ $isFollowing ? 'Following' : 'Follow' }}</span>
-                            </button>
+                            <div class="flex items-center space-x-3">
+                                <button 
+                                    id="followButton"
+                                    data-user-id="{{ $user->id }}"
+                                    data-following="{{ $isFollowing ? 'true' : 'false' }}"
+                                    class="px-6 py-2 rounded-lg font-medium transition-all {{ $isFollowing ? 'bg-gray-700 hover:bg-gray-600 text-white' : 'bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white' }}">
+                                    <span class="follow-text">{{ $isFollowing ? 'Following' : 'Follow' }}</span>
+                                </button>
+                                <a href="{{ route('messages.show', $user) }}" class="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-lg font-medium transition-all flex items-center space-x-2">
+                                    <span class="material-symbols-outlined text-xl">mail</span>
+                                    <span>Message</span>
+                                </a>
+                            </div>
                             <span id="followersCount" class="hidden">{{ $user->followers->count() }}</span>
                         @endif
                     @endauth

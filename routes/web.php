@@ -78,6 +78,14 @@ Route::middleware(['auth'])->group(function () {
         Route::delete('/posts/{post}', [App\Http\Controllers\BookmarkController::class, 'destroy'])->name('destroy');
     });
 
+    // Message Routes
+    Route::prefix('messages')->name('messages.')->group(function () {
+        Route::get('/', [App\Http\Controllers\MessageController::class, 'index'])->name('index');
+        Route::get('/unread-count', [App\Http\Controllers\MessageController::class, 'unreadCount'])->name('unread-count');
+        Route::get('/{user}', [App\Http\Controllers\MessageController::class, 'show'])->name('show');
+        Route::post('/{user}', [App\Http\Controllers\MessageController::class, 'store'])->name('store');
+    });
+
     // Profile Routes
     Route::prefix('profile')->name('profile.')->group(function () {
         Route::get('/edit', [App\Http\Controllers\ProfileController::class, 'edit'])->name('edit');
