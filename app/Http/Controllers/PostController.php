@@ -64,7 +64,7 @@ class PostController extends Controller
         
         $stories = Story::with('user')
             ->whereIn('user_id', $followingIds)
-            ->active()
+            ->where('expires_at', '>', now())
             ->orderBy('created_at', 'desc')
             ->get()
             ->groupBy('user_id');
@@ -89,8 +89,9 @@ class PostController extends Controller
             ->get();
 
         // Suggested users to follow
-        $suggestedUsers = \App\Models\User::whereNotIn('id', $followingIds)
-            ->where('id', '!=', $user->id)
+        $suggestedUsers = \App\Models\User::select('users.*')
+            ->whereNotIn('users.id', $followingIds)
+            ->where('users.id', '!=', $user->id)
             ->withCount(['posts', 'followers'])
             ->having('posts_count', '>', 0)
             ->orderBy('followers_count', 'desc')
