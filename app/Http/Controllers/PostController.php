@@ -110,19 +110,22 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'blog_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'blog_video' => 'nullable|mimes:mp4,mov,ogg,qt|max:50000',
+            'blog_media' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,ogg,qt|max:51200',
+            'status' => 'required|in:draft,published',
         ]);
 
         $imagePath = null;
         $videoPath = null;
         
-        if ($request->hasFile('blog_image')) {
-            $imagePath = $request->file('blog_image')->store('blog_images', 'public');
-        }
-        
-        if ($request->hasFile('blog_video')) {
-            $videoPath = $request->file('blog_video')->store('blog_videos', 'public');
+        if ($request->hasFile('blog_media')) {
+            $file = $request->file('blog_media');
+            $mimeType = $file->getMimeType();
+            
+            if (str_starts_with($mimeType, 'image/')) {
+                $imagePath = $file->store('blog_images', 'public');
+            } elseif (str_starts_with($mimeType, 'video/')) {
+                $videoPath = $file->store('blog_videos', 'public');
+            }
         }
 
         Post::create([
@@ -131,10 +134,14 @@ class PostController extends Controller
             'description' => $request->description,
             'image_path' => $imagePath,
             'video_path' => $videoPath,
-            'status' => 'draft',
+            'status' => $request->status ?? 'published',
         ]);
 
-        return redirect()->route('dashboard')->with('success', 'Blog post created and saved as DRAFT successfully!');
+        $message = $request->status === 'draft' 
+            ? 'Post saved as draft successfully!' 
+            : 'Post published successfully!';
+
+        return redirect()->route('dashboard')->with('success', $message);
     }
 
     public function edit(Post $post)

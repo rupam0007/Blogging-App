@@ -4,59 +4,177 @@
     <meta charset="UTF-8">
     <title>Create New Post</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <style>
+        .media-preview {
+            display: none;
+        }
+        .media-preview.active {
+            display: block;
+        }
+    </style>
 </head>
-<body class="bg-gray-900 text-gray-100 flex justify-center min-h-screen p-8">
-    <div class="w-full max-w-3xl bg-gray-800 p-8 rounded-xl shadow-2xl border border-gray-700">
-        <h2 class="text-3xl font-bold mb-6 text-blue-400 text-center">Create Blog Post</h2>
+<body class="bg-gray-950 text-gray-100 min-h-screen p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <!-- Header -->
+        <div class="mb-8">
+            <a href="{{ route('dashboard') }}" class="inline-flex items-center text-gray-400 hover:text-white mb-4 transition">
+                <span class="material-symbols-outlined mr-2">arrow_back</span>
+                Back to Dashboard
+            </a>
+            <h2 class="text-4xl font-bold bg-gradient-to-r from-purple-400 to-blue-500 bg-clip-text text-transparent">Create New Post</h2>
+            <p class="text-gray-400 mt-2">Share your thoughts with the world</p>
+        </div>
 
         @if (session('success'))
-            <div class="bg-green-600/20 border border-green-500 text-green-300 p-4 rounded-xl mb-4">{{ session('success') }}</div>
+            <div class="bg-green-600/20 border border-green-500 text-green-300 p-4 rounded-xl mb-6 flex items-center">
+                <span class="material-symbols-outlined mr-3">check_circle</span>
+                {{ session('success') }}
+            </div>
         @endif
         
         <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="space-y-6">
             @csrf
             
-            <div>
-                <label for="title" class="block text-gray-400 font-medium mb-1">Blog Title</label>
+            <!-- Title -->
+            <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800">
+                <label for="title" class="flex items-center text-lg font-semibold text-gray-200 mb-3">
+                    <span class="material-symbols-outlined mr-2 text-purple-400">title</span>
+                    Post Title
+                </label>
                 <input type="text" id="title" name="title" required value="{{ old('title') }}"
-                       class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500">
-                @error('title')<p class="text-sm text-red-400 mt-1">{{ $message }}</p>@enderror
+                       placeholder="Enter an engaging title..."
+                       class="w-full bg-gray-800 text-gray-100 px-4 py-3 border border-gray-700 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent transition placeholder-gray-500">
+                @error('title')<p class="text-sm text-red-400 mt-2 flex items-center"><span class="material-symbols-outlined text-sm mr-1">error</span>{{ $message }}</p>@enderror
             </div>
 
-            <div>
-                <label for="description" class="block text-gray-400 font-medium mb-1">Blog Description</label>
-                <textarea id="description" name="description" required rows="6"
-                          class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500">{{ old('description') }}</textarea>
-                @error('description')<p class="text-sm text-red-400 mt-1">{{ $message }}</p>@enderror
+            <!-- Description -->
+            <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800">
+                <label for="description" class="flex items-center text-lg font-semibold text-gray-200 mb-3">
+                    <span class="material-symbols-outlined mr-2 text-blue-400">description</span>
+                    Content
+                </label>
+                <textarea id="description" name="description" required rows="8"
+                          placeholder="Write your post content here..."
+                          class="w-full bg-gray-800 text-gray-100 px-4 py-3 border border-gray-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition placeholder-gray-500 resize-none">{{ old('description') }}</textarea>
+                @error('description')<p class="text-sm text-red-400 mt-2 flex items-center"><span class="material-symbols-outlined text-sm mr-1">error</span>{{ $message }}</p>@enderror
             </div>
             
-            <div>
-                <label for="blog_image" class="block text-gray-400 font-medium mb-1">Blog Image (Optional)</label>
-                <input type="file" id="blog_image" name="blog_image" 
-                       class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-500 file:text-white hover:file:bg-blue-600">
-                @error('blog_image')<p class="text-sm text-red-400 mt-1">{{ $message }}</p>@enderror
+            <!-- Media Upload (Image or Video) -->
+            <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800">
+                <label class="flex items-center text-lg font-semibold text-gray-200 mb-3">
+                    <span class="material-symbols-outlined mr-2 text-pink-400">perm_media</span>
+                    Media (Image or Video)
+                </label>
+                <div class="space-y-4">
+                    <div class="relative">
+                        <input type="file" id="blog_media" name="blog_media" 
+                               accept="image/*,video/*"
+                               onchange="previewMedia(this)"
+                               class="hidden">
+                        <label for="blog_media" class="flex flex-col items-center justify-center w-full h-40 bg-gray-800 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:bg-gray-750 hover:border-purple-500 transition group">
+                            <span class="material-symbols-outlined text-5xl text-gray-600 group-hover:text-purple-400 transition">cloud_upload</span>
+                            <p class="text-gray-400 group-hover:text-gray-300 mt-2">Click to upload image or video</p>
+                            <p class="text-gray-600 text-sm mt-1">JPG, PNG, GIF, MP4, MOV (Max 50MB)</p>
+                        </label>
+                    </div>
+                    
+                    <!-- Media Preview -->
+                    <div id="mediaPreview" class="media-preview rounded-xl overflow-hidden border border-gray-700">
+                        <img id="imagePreview" class="w-full h-auto hidden">
+                        <video id="videoPreview" class="w-full h-auto hidden" controls></video>
+                        <button type="button" onclick="removeMedia()" class="mt-3 flex items-center text-red-400 hover:text-red-300 text-sm">
+                            <span class="material-symbols-outlined text-sm mr-1">delete</span>
+                            Remove media
+                        </button>
+                    </div>
+                </div>
+                @error('blog_media')<p class="text-sm text-red-400 mt-2 flex items-center"><span class="material-symbols-outlined text-sm mr-1">error</span>{{ $message }}</p>@enderror
             </div>
 
-            <div>
-                <label for="blog_video" class="block text-gray-400 font-medium mb-1">Video File (Optional)</label>
-                <input type="file" id="blog_video" name="blog_video" 
-                       class="w-full bg-gray-700 text-gray-200 px-4 py-3 border border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-purple-500 file:text-white hover:file:bg-purple-600">
-                @error('blog_video')<p class="text-sm text-red-400 mt-1">{{ $message }}</p>@enderror
+            <!-- Status Toggle -->
+            <div class="bg-gray-900 p-6 rounded-2xl border border-gray-800">
+                <label class="flex items-center text-lg font-semibold text-gray-200 mb-4">
+                    <span class="material-symbols-outlined mr-2 text-green-400">visibility</span>
+                    Post Visibility
+                </label>
+                <div class="flex items-center space-x-4">
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="radio" name="status" value="published" checked class="w-4 h-4 text-purple-600 focus:ring-purple-500">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-green-400 mr-2">public</span>
+                            <div>
+                                <p class="text-gray-200 font-medium">Publish Now</p>
+                                <p class="text-gray-500 text-sm">Everyone can see this post</p>
+                            </div>
+                        </div>
+                    </label>
+                    <label class="flex items-center space-x-3 cursor-pointer">
+                        <input type="radio" name="status" value="draft" class="w-4 h-4 text-purple-600 focus:ring-purple-500">
+                        <div class="flex items-center">
+                            <span class="material-symbols-outlined text-gray-400 mr-2">draft</span>
+                            <div>
+                                <p class="text-gray-200 font-medium">Save as Draft</p>
+                                <p class="text-gray-500 text-sm">Only you can see this</p>
+                            </div>
+                        </div>
+                    </label>
+                </div>
             </div>
 
-            <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl hover:bg-green-700 transition-all duration-300">
-                Save as Draft
-            </button>
-            
-            <a href="{{ route('blogs.index') }}" class="block text-center text-blue-400 hover:text-blue-300 mt-4">
-                View All Blogs
-            </a>
-        </form>
-        
-        <form action="{{ route('logout') }}" method="POST" class="mt-8 text-center">
-            @csrf
-            <button type="submit" class="text-red-400 hover:text-red-300 text-sm">Logout</button>
+            <!-- Submit Button -->
+            <div class="flex space-x-4">
+                <button type="submit" class="flex-1 bg-gradient-to-r from-purple-600 to-blue-600 text-white font-bold py-4 rounded-xl hover:from-purple-700 hover:to-blue-700 transition-all duration-300 shadow-lg hover:shadow-purple-500/50 flex items-center justify-center">
+                    <span class="material-symbols-outlined mr-2">send</span>
+                    Create Post
+                </button>
+                <a href="{{ route('dashboard') }}" class="px-6 py-4 bg-gray-800 text-gray-300 font-semibold rounded-xl hover:bg-gray-700 transition flex items-center">
+                    <span class="material-symbols-outlined">close</span>
+                </a>
+            </div>
         </form>
     </div>
+
+    <script>
+        function previewMedia(input) {
+            const preview = document.getElementById('mediaPreview');
+            const imagePreview = document.getElementById('imagePreview');
+            const videoPreview = document.getElementById('videoPreview');
+            
+            if (input.files && input.files[0]) {
+                const file = input.files[0];
+                const reader = new FileReader();
+                
+                reader.onload = function(e) {
+                    if (file.type.startsWith('image/')) {
+                        imagePreview.src = e.target.result;
+                        imagePreview.classList.remove('hidden');
+                        videoPreview.classList.add('hidden');
+                    } else if (file.type.startsWith('video/')) {
+                        videoPreview.src = e.target.result;
+                        videoPreview.classList.remove('hidden');
+                        imagePreview.classList.add('hidden');
+                    }
+                    preview.classList.add('active');
+                }
+                
+                reader.readAsDataURL(file);
+            }
+        }
+        
+        function removeMedia() {
+            const input = document.getElementById('blog_media');
+            const preview = document.getElementById('mediaPreview');
+            const imagePreview = document.getElementById('imagePreview');
+            const videoPreview = document.getElementById('videoPreview');
+            
+            input.value = '';
+            imagePreview.src = '';
+            videoPreview.src = '';
+            imagePreview.classList.add('hidden');
+            videoPreview.classList.add('hidden');
+            preview.classList.remove('active');
+        }
+    </script>
 </body>
 </html>

@@ -8,8 +8,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('posts', function (Blueprint $table) {
-            // 'draft' by default, can be changed to 'published'
-            $table->enum('status', ['draft', 'published'])->default('draft')->after('image_path'); 
+            // 'published' by default, can be changed to 'draft'
+            $table->enum('status', ['draft', 'published'])->default('published')->after('image_path'); 
         });
     }
 
