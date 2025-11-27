@@ -173,10 +173,14 @@
 <script>
     let lastMessageId = {{ $messages->last()->id ?? 0 }};
     let isScrolledToBottom = true;
+    let isFetching = false;
+    let messageIds = new Set([{{ $messages->pluck('id')->implode(',') }}]);
 
     // Scroll to bottom on page load
     document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('messages-container');
+        if (!container) return;
+        
         scrollToBottom();
         
         // Check if user is scrolled to bottom
@@ -185,17 +189,22 @@
             isScrolledToBottom = container.scrollHeight - container.scrollTop - container.clientHeight < threshold;
         });
 
-        // Auto-refresh messages every 2 seconds
-        setInterval(fetchNewMessages, 2000);
+        // Auto-refresh messages every 3 seconds
+        setInterval(fetchNewMessages, 3000);
     });
 
     function scrollToBottom() {
         const container = document.getElementById('messages-container');
-        container.scrollTop = container.scrollHeight;
+        if (container) {
+            container.scrollTop = container.scrollHeight;
+        }
     }
 
     // Fetch new messages via AJAX
     function fetchNewMessages() {
+        if (isFetching) return; // Prevent concurrent requests
+        isFetching = true;
+
         fetch(`{{ route('messages.fetch', $user) }}?last_id=${lastMessageId}`, {
             method: 'GET',
             headers: {
@@ -207,27 +216,40 @@
         .then(data => {
             if (data.messages && data.messages.length > 0) {
                 const container = document.getElementById('messages-container');
+                if (!container) return;
                 
+                let hasNewMessages = false;
                 data.messages.forEach(message => {
-                    appendMessage(message);
-                    lastMessageId = message.id;
+                    // Check if message already exists
+                    if (!messageIds.has(message.id)) {
+                        appendMessage(message);
+                        messageIds.add(message.id);
+                        lastMessageId = Math.max(lastMessageId, message.id);
+                        hasNewMessages = true;
+                    }
                 });
 
-                // Only auto-scroll if user was already at bottom
-                if (isScrolledToBottom) {
+                // Only auto-scroll if user was already at bottom and there are new messages
+                if (hasNewMessages && isScrolledToBottom) {
                     scrollToBottom();
                 }
             }
         })
-        .catch(error => console.error('Error fetching messages:', error));
+        .catch(error => console.error('Error fetching messages:', error))
+        .finally(() => {
+            isFetching = false;
+        });
     }
 
     function appendMessage(message) {
         const container = document.getElementById('messages-container');
+        if (!container) return;
+        
         const isOwnMessage = message.sender_id === {{ Auth::id() }};
         
         const messageDiv = document.createElement('div');
         messageDiv.className = `flex ${isOwnMessage ? 'justify-end' : 'justify-start'}`;
+        messageDiv.setAttribute('data-message-id', message.id);
         
         let fileContent = '';
         if (message.file_path) {
@@ -253,6 +275,12 @@
                 </p>
             </div>
         `;
+        
+        // Remove typing indicator if exists
+        const typingIndicator = document.getElementById('typing-indicator');
+        if (typingIndicator) {
+            typingIndicator.classList.add('hidden');
+        }
         
         container.appendChild(messageDiv);
     }

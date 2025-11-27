@@ -98,7 +98,7 @@
                         @if($post->tags->count() > 0)
                             <div class="mt-3 flex flex-wrap gap-2">
                                 @foreach($post->tags->take(3) as $postTag)
-                                    <a href="{{ route('explore.tag', $postTag->slug) }}" 
+                                    <a href="{{ route('tags.show', $postTag->slug) }}" 
                                        class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium {{ $postTag->id === $tag->id ? 'bg-blue-600 text-white' : 'bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200 hover:bg-blue-200 dark:hover:bg-blue-800' }}">
                                         {{ $postTag->name }}
                                     </a>
