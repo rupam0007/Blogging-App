@@ -6,15 +6,20 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 py-6">
     <div class="bg-white dark:bg-gray-900 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-800">
         <!-- Header -->
-        <div class="p-6 border-b border-gray-200 dark:border-gray-800">
+        <div class="p-6 border-b border-gray-200 dark:border-gray-800 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900">
             <div class="flex items-center justify-between">
                 <h1 class="text-2xl font-bold text-gray-900 dark:text-white flex items-center">
-                    <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 mr-3 text-3xl">mail</span>
+                    <span class="material-symbols-outlined text-purple-600 dark:text-purple-400 mr-3 text-3xl">chat_bubble</span>
                     Messages
                 </h1>
-                <a href="{{ route('dashboard') }}" class="text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-purple-400 transition">
-                    <span class="material-symbols-outlined">close</span>
-                </a>
+                <div class="flex items-center space-x-2">
+                    <button type="button" class="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition" title="New message">
+                        <span class="material-symbols-outlined">edit</span>
+                    </button>
+                    <a href="{{ route('dashboard') }}" class="p-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition" title="Close">
+                        <span class="material-symbols-outlined">close</span>
+                    </a>
+                </div>
             </div>
         </div>
 

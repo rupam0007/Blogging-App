@@ -83,6 +83,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [App\Http\Controllers\MessageController::class, 'index'])->name('index');
         Route::get('/unread-count', [App\Http\Controllers\MessageController::class, 'unreadCount'])->name('unread-count');
         Route::get('/{user}', [App\Http\Controllers\MessageController::class, 'show'])->name('show');
+        Route::get('/{user}/fetch', [App\Http\Controllers\MessageController::class, 'fetchNew'])->name('fetch');
         Route::post('/{user}', [App\Http\Controllers\MessageController::class, 'store'])->name('store');
     });
 

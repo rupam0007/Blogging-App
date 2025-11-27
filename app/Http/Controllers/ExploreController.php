@@ -35,7 +35,7 @@ class ExploreController extends Controller
             
             $suggestedUsers = User::whereNotIn('id', $followingIds)
                 ->withCount(['posts', 'followers'])
-                ->where('posts_count', '>', 0)
+                ->having('posts_count', '>', 0)
                 ->orderBy('followers_count', 'desc')
                 ->take(8)
                 ->get();

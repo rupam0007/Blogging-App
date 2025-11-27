@@ -94,6 +94,9 @@ class MessageController extends Controller
                 ->count();
             
             if ($messagesSent >= 2) {
+                if ($request->wantsJson()) {
+                    return response()->json(['error' => 'You must follow this user to send more messages.'], 403);
+                }
                 return back()->with('error', 'You must follow this user to send more messages.');
             }
         }
@@ -125,7 +128,7 @@ class MessageController extends Controller
             }
         }
 
-        Message::create([
+        $message = Message::create([
             'sender_id' => Auth::id(),
             'receiver_id' => $user->id,
             'message' => $request->message,
@@ -133,7 +136,37 @@ class MessageController extends Controller
             'file_type' => $fileType,
         ]);
 
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => $message]);
+        }
+
         return back()->with('success', 'Message sent successfully!');
+    }
+
+    // Fetch new messages (for real-time updates)
+    public function fetchNew(Request $request, User $user)
+    {
+        $lastId = $request->query('last_id', 0);
+        
+        $messages = Message::where(function ($query) use ($user) {
+            $query->where('sender_id', Auth::id())
+                  ->where('receiver_id', $user->id);
+        })->orWhere(function ($query) use ($user) {
+            $query->where('sender_id', $user->id)
+                  ->where('receiver_id', Auth::id());
+        })
+        ->where('id', '>', $lastId)
+        ->orderBy('created_at', 'asc')
+        ->get();
+
+        // Mark received messages as read
+        Message::where('sender_id', $user->id)
+            ->where('receiver_id', Auth::id())
+            ->where('id', '>', $lastId)
+            ->whereNull('read_at')
+            ->update(['read_at' => now()]);
+
+        return response()->json(['messages' => $messages]);
     }
 
     // Get unread message count

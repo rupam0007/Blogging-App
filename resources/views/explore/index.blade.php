@@ -200,7 +200,7 @@
                                     </p>
                                 </div>
                             </a>
-                            <form action="{{ route('users.follow', $user) }}" method="POST" class="inline">
+                            <form action="{{ route('users.follow', $user->username ?? $user->id) }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="px-4 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-full hover:from-purple-700 hover:to-blue-700 transition">
                                     Follow

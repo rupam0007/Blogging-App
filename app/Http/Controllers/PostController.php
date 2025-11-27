@@ -92,7 +92,7 @@ class PostController extends Controller
         $suggestedUsers = \App\Models\User::whereNotIn('id', $followingIds)
             ->where('id', '!=', $user->id)
             ->withCount(['posts', 'followers'])
-            ->where('posts_count', '>', 0)
+            ->having('posts_count', '>', 0)
             ->orderBy('followers_count', 'desc')
             ->take(5)
             ->get();

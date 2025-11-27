@@ -298,7 +298,7 @@
                                     <p class="text-xs text-gray-500 dark:text-gray-400">{{ $suggestedUser->followers_count }} followers</p>
                                 </a>
                             </div>
-                            <form action="{{ route('users.follow', $suggestedUser) }}" method="POST" class="inline">
+                            <form action="{{ route('users.follow', $suggestedUser->username ?? $suggestedUser->id) }}" method="POST" class="inline">
                                 @csrf
                                 <button type="submit" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-xs font-semibold transition">
                                     Follow

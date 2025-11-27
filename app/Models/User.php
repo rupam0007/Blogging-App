@@ -37,11 +37,19 @@ class User extends Authenticatable
 
     /**
      * Get the route key name for Laravel route model binding
-     * This allows using username OR id in routes
+     * Always use ID to avoid issues with NULL usernames
      */
     public function getRouteKeyName()
     {
-        return 'username';
+        return 'id';
+    }
+
+    /**
+     * Get the value for the route key
+     */
+    public function getRouteKey()
+    {
+        return $this->id;
     }
 
     /**
@@ -49,13 +57,21 @@ class User extends Authenticatable
      */
     public function resolveRouteBinding($value, $field = null)
     {
-        // Try to find by username first
-        if (!is_numeric($value)) {
-            return $this->where('username', $value)->firstOrFail();
+        // If value is empty or null, fail
+        if (empty($value)) {
+            return null;
+        }
+
+        // If numeric, treat as ID
+        if (is_numeric($value)) {
+            return $this->where('id', $value)->firstOrFail();
         }
         
-        // Otherwise find by ID
-        return $this->where('id', $value)->firstOrFail();
+        // Otherwise, try username first
+        $user = $this->where('username', $value)->first();
+        
+        // If not found by username, try as ID (for numeric strings)
+        return $user ?: $this->where('id', $value)->firstOrFail();
     }
 
     /**
