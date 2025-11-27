@@ -110,7 +110,7 @@ class PostController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'blog_media' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,ogg,qt|max:51200',
+            'blog_media' => 'nullable|file|mimes:jpeg,png,jpg,gif,mp4,mov,ogg,qt|max:102400',
             'status' => 'required|in:draft,published',
         ]);
 

@@ -37,8 +37,8 @@ class ProfileController extends Controller
             'username' => 'required|string|max:255|unique:users,username,' . $user->id,
             'email' => 'required|string|email|max:255|unique:users,email,' . $user->id,
             'bio' => 'nullable|string|max:500',
-            'avatar' => 'nullable|image|max:1024',
-            'cover_photo' => 'nullable|image|max:2048',
+            'avatar' => 'nullable|image|max:5120',
+            'cover_photo' => 'nullable|image|max:10240',
         ]);
 
         $data = $request->only(['name', 'username', 'email', 'bio']);

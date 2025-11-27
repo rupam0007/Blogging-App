@@ -103,7 +103,7 @@ class MessageController extends Controller
 
         $request->validate([
             'message' => 'nullable|string|max:5000',
-            'file' => 'nullable|file|max:51200|mimes:jpeg,png,jpg,gif,mp4,mov,pdf,doc,docx,txt',
+            'file' => 'nullable|file|max:102400|mimes:jpeg,png,jpg,gif,mp4,mov,pdf,doc,docx,txt',
         ]);
 
         $filePath = null;

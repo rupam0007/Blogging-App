@@ -39,7 +39,7 @@ class StoryController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'media' => 'required|file|mimes:jpg,jpeg,png,gif,mp4,mov|max:20480',
+            'media' => 'required|file|mimes:jpg,jpeg,png,gif,mp4,mov|max:51200',
             'caption' => 'nullable|string|max:500',
         ]);
 

@@ -75,7 +75,7 @@
                         <label for="blog_media" class="flex flex-col items-center justify-center w-full h-40 bg-gray-800 border-2 border-dashed border-gray-700 rounded-xl cursor-pointer hover:bg-gray-750 hover:border-purple-500 transition group">
                             <span class="material-symbols-outlined text-5xl text-gray-600 group-hover:text-purple-400 transition">cloud_upload</span>
                             <p class="text-gray-400 group-hover:text-gray-300 mt-2">Click to upload image or video</p>
-                            <p class="text-gray-600 text-sm mt-1">JPG, PNG, GIF, MP4, MOV (Max 50MB)</p>
+                            <p class="text-gray-600 text-sm mt-1">JPG, PNG, GIF, MP4, MOV (Max 100MB)</p>
                         </label>
                     </div>
                     
