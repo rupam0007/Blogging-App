@@ -1,8 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8">
-    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="min-h-screen bg-gradient-to-br from-gray-900 via-purple-900 to-gray-900 py-8 overflow-y-auto">
+    <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         <!-- Header -->
         <div class="mb-8">
             <a href="{{ route('stories.index') }}" class="text-purple-400 hover:text-purple-300 flex items-center mb-4">
@@ -14,7 +14,7 @@
         </div>
 
         <!-- Create Story Form -->
-        <div class="bg-gray-800 rounded-xl border border-gray-700 p-8">
+        <div class="bg-gray-800 rounded-xl border border-gray-700 p-6 sm:p-8">
             <form method="POST" action="{{ route('stories.store') }}" enctype="multipart/form-data" id="story-form">
                 @csrf
 
@@ -36,12 +36,12 @@
 
                     <!-- Preview Area -->
                     <div id="preview-area" class="mt-4 hidden">
-                        <div class="relative aspect-[9/16] max-w-sm mx-auto rounded-xl overflow-hidden bg-black">
-                            <img id="image-preview" class="hidden w-full h-full object-cover">
-                            <video id="video-preview" class="hidden w-full h-full object-cover" controls></video>
+                        <div class="relative w-full max-w-sm mx-auto rounded-xl overflow-hidden bg-black" style="max-height: 500px;">
+                            <img id="image-preview" class="hidden w-full h-auto max-h-[500px] object-contain">
+                            <video id="video-preview" class="hidden w-full h-auto max-h-[500px] object-contain" controls></video>
                             
                             <!-- Remove Button -->
-                            <button type="button" id="remove-media" class="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full transition-all">
+                            <button type="button" id="remove-media" class="absolute top-4 right-4 bg-red-600 hover:bg-red-700 text-white p-2 rounded-full transition-all z-10 shadow-lg">
                                 <span class="material-symbols-outlined text-xl">close</span>
                             </button>
                         </div>
@@ -55,7 +55,8 @@
                 <!-- Caption -->
                 <div class="mb-6">
                     <label for="caption" class="block text-white font-medium mb-3">Caption (Optional)</label>
-                    <textarea name="caption" id="caption" rows="3" class="w-full bg-gray-900 text-white rounded-lg px-4 py-3 border border-gray-700 focus:border-purple-500 focus:outline-none" placeholder="Add a caption to your story...">{{ old('caption') }}</textarea>
+                    <textarea name="caption" id="caption" rows="3" maxlength="500" class="w-full bg-gray-900 text-white rounded-lg px-4 py-3 border border-gray-700 focus:border-purple-500 focus:outline-none resize-none" placeholder="Add a caption to your story...">{{ old('caption') }}</textarea>
+                    <p class="text-gray-500 text-xs mt-1">Max 500 characters</p>
                     @error('caption')
                         <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
                     @enderror
