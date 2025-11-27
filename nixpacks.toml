@@ -8,4 +8,4 @@ cmds = ["composer install --no-dev --optimize-autoloader"]
 cmds = ["php artisan config:clear", "php artisan cache:clear"]
 
 [start]
-cmd = "bash -c 'for i in {1..30}; do php artisan migrate --force 2>/dev/null && break || sleep 2; done && php artisan serve --host=0.0.0.0 --port=$PORT'"
+cmd = "bash -c '(for i in {1..10}; do php artisan migrate --force 2>/dev/null && break || sleep 1; done) & php artisan serve --host=0.0.0.0 --port=$PORT'"
