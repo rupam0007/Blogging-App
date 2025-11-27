@@ -46,14 +46,7 @@ class FollowController extends Controller
         if (Auth::user()->isFollowing($user->id)) {
             Auth::user()->following()->detach($user->id);
             
-            Notification::create([
-                'user_id' => $user->id,
-                'from_user_id' => Auth::id(),
-                'type' => 'unfollow',
-                'notifiable_type' => User::class,
-                'notifiable_id' => Auth::id(),
-                'content' => Auth::user()->name . ' unfollowed you',
-            ]);
+            // No notification sent for unfollows (standard social media behavior)
             
             if (request()->ajax()) {
                 return response()->json([
