@@ -51,54 +51,63 @@ class PostController extends Controller
 
     public function dashboard()
     {
-        $user = Auth::user();
-        
-        $followingIds = $user->following()->pluck('following_id')->toArray();
-        $followingIds[] = $user->id;
-        
-        $feed = Post::with(['user', 'reactions', 'allComments'])
-            ->whereIn('user_id', $followingIds)
-            ->where('status', 'published')
-            ->latest()
-            ->paginate(10);
-        
-        $stories = Story::with('user')
-            ->whereIn('user_id', $followingIds)
-            ->where('expires_at', '>', now())
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->groupBy('user_id');
-        
-        $userPosts = $user->posts()->latest()->get();
-        $stats = [
-            'total' => $userPosts->count(),
-            'published' => $userPosts->where('status', 'published')->count(),
-            'draft' => $userPosts->where('status', 'draft')->count(),
-        ];
-        
-        $myPosts = $user->posts()
-            ->withCount(['reactions', 'allComments'])
-            ->latest()
-            ->paginate(5, ['*'], 'my_posts');
-        
-        $trendingPosts = Post::withCount('reactions')
-            ->where('status', 'published')
-            ->where('created_at', '>=', now()->subDays(7))
-            ->orderBy('reactions_count', 'desc')
-            ->take(5)
-            ->get();
+        try {
+            $user = Auth::user();
+            
+            $followingIds = $user->following()->pluck('following_id')->toArray();
+            $followingIds[] = $user->id;
+            
+            $feed = Post::with(['user', 'reactions', 'allComments'])
+                ->whereIn('user_id', $followingIds)
+                ->where('status', 'published')
+                ->latest()
+                ->paginate(10);
+            
+            $stories = Story::with('user')
+                ->whereIn('user_id', $followingIds)
+                ->where('expires_at', '>', now())
+                ->orderBy('created_at', 'desc')
+                ->get()
+                ->groupBy('user_id');
+            
+            $userPosts = $user->posts()->latest()->get();
+            $stats = [
+                'total' => $userPosts->count(),
+                'published' => $userPosts->where('status', 'published')->count(),
+                'draft' => $userPosts->where('status', 'draft')->count(),
+            ];
+            
+            $myPosts = $user->posts()
+                ->withCount(['reactions', 'allComments'])
+                ->latest()
+                ->paginate(5, ['*'], 'my_posts');
+            
+            $trendingPosts = Post::withCount('reactions')
+                ->where('status', 'published')
+                ->where('created_at', '>=', now()->subDays(7))
+                ->orderBy('reactions_count', 'desc')
+                ->take(5)
+                ->get();
 
-        // Suggested users to follow
-        $suggestedUsers = \App\Models\User::select('users.*')
-            ->whereNotIn('users.id', $followingIds)
-            ->where('users.id', '!=', $user->id)
-            ->withCount(['posts', 'followers'])
-            ->having('posts_count', '>', 0)
-            ->orderBy('followers_count', 'desc')
-            ->take(5)
-            ->get();
+            // Suggested users to follow - using raw query for Railway compatibility
+            $suggestedUsers = \App\Models\User::select('users.*')
+                ->leftJoin('posts', 'users.id', '=', 'posts.user_id')
+                ->leftJoin('follows', 'users.id', '=', 'follows.following_id')
+                ->whereNotIn('users.id', $followingIds)
+                ->where('users.id', '!=', $user->id)
+                ->groupBy('users.id')
+                ->selectRaw('COUNT(DISTINCT posts.id) as posts_count')
+                ->selectRaw('COUNT(DISTINCT follows.follower_id) as followers_count')
+                ->havingRaw('COUNT(DISTINCT posts.id) > 0')
+                ->orderByDesc('followers_count')
+                ->take(5)
+                ->get();
 
-        return view('posts.dashboard', compact('feed', 'stories', 'stats', 'trendingPosts', 'myPosts', 'suggestedUsers'));
+            return view('posts.dashboard', compact('feed', 'stories', 'stats', 'trendingPosts', 'myPosts', 'suggestedUsers'));
+        } catch (\Exception $e) {
+            \Log::error('Dashboard Error: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred loading the dashboard. Please try again.');
+        }
     }
 
     public function create()

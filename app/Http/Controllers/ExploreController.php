@@ -33,10 +33,15 @@ class ExploreController extends Controller
             $followingIds = Auth::user()->following()->pluck('following_id')->toArray();
             $followingIds[] = Auth::id();
             
-            $suggestedUsers = User::whereNotIn('id', $followingIds)
-                ->withCount(['posts', 'followers'])
-                ->having('posts_count', '>', 0)
-                ->orderBy('followers_count', 'desc')
+            $suggestedUsers = User::select('users.*')
+                ->leftJoin('posts', 'users.id', '=', 'posts.user_id')
+                ->leftJoin('follows', 'users.id', '=', 'follows.following_id')
+                ->whereNotIn('users.id', $followingIds)
+                ->groupBy('users.id')
+                ->selectRaw('COUNT(DISTINCT posts.id) as posts_count')
+                ->selectRaw('COUNT(DISTINCT follows.follower_id) as followers_count')
+                ->havingRaw('COUNT(DISTINCT posts.id) > 0')
+                ->orderByDesc('followers_count')
                 ->take(8)
                 ->get();
         }
