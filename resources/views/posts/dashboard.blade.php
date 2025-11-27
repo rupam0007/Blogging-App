@@ -279,6 +279,39 @@
                 </div>
 
                 <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
+                    <h3 class="font-bold mb-4 text-gray-900 dark:text-white">Suggested for You</h3>
+                    <div class="space-y-4">
+                        @forelse($suggestedUsers as $suggestedUser)
+                        <div class="flex items-center space-x-3">
+                            <a href="{{ route('profile.show', $suggestedUser->username ?? $suggestedUser->id) }}">
+                                @if($suggestedUser->avatar)
+                                    <img src="{{ asset('storage/' . $suggestedUser->avatar) }}" class="w-10 h-10 rounded-full">
+                                @else
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-r from-purple-500 to-blue-500 flex items-center justify-center text-white text-sm font-bold">
+                                        {{ substr($suggestedUser->name, 0, 1) }}
+                                    </div>
+                                @endif
+                            </a>
+                            <div class="flex-1 min-w-0">
+                                <a href="{{ route('profile.show', $suggestedUser->username ?? $suggestedUser->id) }}" class="block">
+                                    <h4 class="font-semibold text-sm truncate text-gray-900 dark:text-white">{{ $suggestedUser->name }}</h4>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">{{ $suggestedUser->followers_count }} followers</p>
+                                </a>
+                            </div>
+                            <form action="{{ route('users.follow', $suggestedUser) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 text-xs font-semibold transition">
+                                    Follow
+                                </button>
+                            </form>
+                        </div>
+                        @empty
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">No suggestions yet</p>
+                        @endforelse
+                    </div>
+                </div>
+
+                <div class="mt-6 pt-6 border-t border-gray-200 dark:border-gray-800">
                     <h3 class="font-bold mb-4 text-sm text-gray-900 dark:text-white">Quick Links</h3>
                     <div class="space-y-2 text-sm">
                         <a href="{{ route('blogs.index') }}" class="block text-gray-600 dark:text-gray-400 hover:text-purple-600 dark:hover:text-white">All Blogs</a>

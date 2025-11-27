@@ -88,7 +88,16 @@ class PostController extends Controller
             ->take(5)
             ->get();
 
-        return view('posts.dashboard', compact('feed', 'stories', 'stats', 'trendingPosts', 'myPosts'));
+        // Suggested users to follow
+        $suggestedUsers = \App\Models\User::whereNotIn('id', $followingIds)
+            ->where('id', '!=', $user->id)
+            ->withCount(['posts', 'followers'])
+            ->where('posts_count', '>', 0)
+            ->orderBy('followers_count', 'desc')
+            ->take(5)
+            ->get();
+
+        return view('posts.dashboard', compact('feed', 'stories', 'stats', 'trendingPosts', 'myPosts', 'suggestedUsers'));
     }
 
     public function create()

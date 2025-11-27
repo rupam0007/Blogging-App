@@ -168,6 +168,51 @@
                 </div>
             </div>
 
+            @auth
+            <!-- Suggested Users -->
+            @if($suggestedUsers->count() > 0)
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
+                <h3 class="flex items-center text-lg font-semibold text-gray-900 dark:text-white mb-4">
+                    <span class="material-symbols-outlined text-xl mr-2">person_add</span>
+                    Suggested for You
+                </h3>
+                <div class="space-y-4">
+                    @foreach($suggestedUsers as $user)
+                        <div class="flex items-center justify-between">
+                            <a href="{{ route('profile.show', $user->username ?? $user->id) }}" class="flex items-center flex-1 group">
+                                @if($user->avatar)
+                                    <img src="{{ asset('storage/' . $user->avatar) }}" 
+                                         alt="{{ $user->name }}"
+                                         class="w-10 h-10 rounded-full mr-3">
+                                @else
+                                    <div class="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-600 flex items-center justify-center mr-3">
+                                        <span class="text-white text-sm font-semibold">
+                                            {{ substr($user->name, 0, 1) }}
+                                        </span>
+                                    </div>
+                                @endif
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 dark:text-white truncate group-hover:text-blue-600 dark:group-hover:text-blue-500">
+                                        {{ $user->name }}
+                                    </p>
+                                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                                        {{ $user->followers_count }} followers
+                                    </p>
+                                </div>
+                            </a>
+                            <form action="{{ route('users.follow', $user) }}" method="POST" class="inline">
+                                @csrf
+                                <button type="submit" class="px-4 py-1.5 text-xs font-semibold text-white bg-gradient-to-r from-purple-600 to-blue-600 rounded-full hover:from-purple-700 hover:to-blue-700 transition">
+                                    Follow
+                                </button>
+                            </form>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+            @endif
+            @endauth
+
             <!-- Top Creators -->
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                 <h3 class="flex items-center text-lg font-semibold text-gray-900 dark:text-white mb-4">

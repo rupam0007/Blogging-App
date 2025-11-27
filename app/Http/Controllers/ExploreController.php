@@ -27,7 +27,21 @@ class ExploreController extends Controller
             return User::topCreators(10)->get();
         });
 
-        return view('explore.index', compact('posts', 'popularTags', 'topCreators', 'filter'));
+        // Suggested users to follow
+        $suggestedUsers = [];
+        if (Auth::check()) {
+            $followingIds = Auth::user()->following()->pluck('following_id')->toArray();
+            $followingIds[] = Auth::id();
+            
+            $suggestedUsers = User::whereNotIn('id', $followingIds)
+                ->withCount(['posts', 'followers'])
+                ->where('posts_count', '>', 0)
+                ->orderBy('followers_count', 'desc')
+                ->take(8)
+                ->get();
+        }
+
+        return view('explore.index', compact('posts', 'popularTags', 'topCreators', 'filter', 'suggestedUsers'));
     }
 
     private function getPostsByFilter($filter)
